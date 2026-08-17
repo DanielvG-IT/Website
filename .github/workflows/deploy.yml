@@ -16,7 +16,6 @@ jobs:
   deploy:
     name: Build and deploy to Plesk
     runs-on: ubuntu-latest
-    environment: production
     permissions:
       contents: read
 
@@ -56,12 +55,23 @@ jobs:
           USER: ${{ secrets.DEPLOY_USER }}
           TARGET: ${{ secrets.DEPLOY_PATH }}
           KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
         run: |
-          if [ -n "$HOST" ] && [ -n "$USER" ] && [ -n "$TARGET" ] && [ -n "$KEY" ]; then
+          missing=""
+          [ -n "$HOST" ]        || missing="$missing DEPLOY_HOST"
+          [ -n "$USER" ]        || missing="$missing DEPLOY_USER"
+          [ -n "$TARGET" ]      || missing="$missing DEPLOY_PATH"
+          [ -n "$KEY" ]         || missing="$missing DEPLOY_SSH_KEY"
+          # Without this the SSH step writes an empty known_hosts and the
+          # connection dies on host key verification, so it gates the deploy
+          # like any other required secret.
+          [ -n "$KNOWN_HOSTS" ] || missing="$missing DEPLOY_KNOWN_HOSTS"
+
+          if [ -z "$missing" ]; then
             echo "configured=true" >> "$GITHUB_OUTPUT"
           else
             echo "configured=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::Deploy secrets not set — build verified, upload skipped. See README for the required secrets."
+            echo "::notice::Build verified, upload skipped — missing secret(s):$missing"
           fi
 
       - name: Configure SSH

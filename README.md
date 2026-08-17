@@ -89,7 +89,7 @@ alternate link in `src/components/SEO.astro`.
 Pushing to `main` triggers `.github/workflows/deploy.yml`: `npm ci` →
 `astro build` → `rsync -avz --delete dist/` to the origin over SSH.
 
-Required repository secrets (environment: `production`):
+Required repository secrets (*Settings → Secrets and variables → Actions*):
 
 | Secret                | Value                                            |
 | --------------------- | ------------------------------------------------ |
@@ -97,7 +97,7 @@ Required repository secrets (environment: `production`):
 | `DEPLOY_KNOWN_HOSTS`  | Output of `ssh-keyscan -p <port> <host>`         |
 | `DEPLOY_HOST`         | Origin hostname                                  |
 | `DEPLOY_USER`         | SSH user                                         |
-| `DEPLOY_PATH`         | Absolute path to the web root, e.g. `/var/www/vhosts/.../httpdocs` |
+| `DEPLOY_PATH`         | `httpdocs` — deliberately relative to the login home, so it resolves correctly whether or not the SSH user is chrooted |
 | `DEPLOY_PORT`         | Optional, defaults to `22`                       |
 
 The workflow verifies `dist/index.html` and `dist/.htaccess` exist and that at
