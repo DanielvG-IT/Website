@@ -89,7 +89,7 @@ alternate link in `src/components/SEO.astro`.
 Pushing to `main` triggers `.github/workflows/deploy.yml`: `npm ci` →
 `astro build` → `rsync -avz --delete dist/` to the origin over SSH.
 
-Required repository secrets (environment: `production`):
+Required repository secrets (*Settings → Secrets and variables → Actions*):
 
 | Secret                | Value                                            |
 | --------------------- | ------------------------------------------------ |
