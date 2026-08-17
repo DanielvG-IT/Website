@@ -1,0 +1,93 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  # Manual re-deploy without an empty commit.
+  workflow_dispatch:
+
+# Never let two rsyncs write to the origin at once. Deploys are not cancelled
+# in progress: a half-synced --delete would leave the live site broken.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Build and deploy to Plesk
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v5
+
+      - name: Set up Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      # Fails loudly on an empty or partial build rather than shipping a
+      # --delete rsync that would wipe the live site.
+      - name: Verify build output
+        run: |
+          test -f dist/index.html || { echo "::error::dist/index.html missing"; exit 1; }
+          test -f dist/.htaccess || { echo "::error::dist/.htaccess missing"; exit 1; }
+          count=$(find dist -name '*.html' | wc -l)
+          echo "Built $count HTML pages."
+          [ "$count" -ge 5 ] || { echo "::error::Only $count pages built; expected at least 5"; exit 1; }
+
+      # The secrets context is not available in job-level `if`, so gate the
+      # deploy steps on an output instead. Until the secrets are added, the
+      # build still runs and validates on every push — it just does not ship.
+      - name: Check deploy configuration
+        id: check
+        env:
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          USER: ${{ secrets.DEPLOY_USER }}
+          TARGET: ${{ secrets.DEPLOY_PATH }}
+          KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          if [ -n "$HOST" ] && [ -n "$USER" ] && [ -n "$TARGET" ] && [ -n "$KEY" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Deploy secrets not set — build verified, upload skipped. See README for the required secrets."
+          fi
+
+      - name: Configure SSH
+        if: steps.check.outputs.configured == 'true'
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          # Pin the host key instead of trusting on first use.
+          echo "${{ secrets.DEPLOY_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Deploy with rsync
+        if: steps.check.outputs.configured == 'true'
+        env:
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          USER: ${{ secrets.DEPLOY_USER }}
+          PORT: ${{ secrets.DEPLOY_PORT || '22' }}
+          TARGET: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          # Trailing slash on dist/ copies the contents, not the directory.
+          rsync -avz --delete \
+            --exclude '.well-known' \
+            -e "ssh -p $PORT -i ~/.ssh/id_ed25519" \
+            dist/ "$USER@$HOST:$TARGET"
+
+      - name: Clean up SSH key
+        if: always()
+        run: rm -f ~/.ssh/id_ed25519 ~/.ssh/known_hosts

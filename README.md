@@ -1,71 +1,105 @@
-# Portfolio
+# danielvanginneken.com
 
-This portfolio runs on Next.js 16 with the App Router.
+Personal site — built with [Astro](https://astro.build), output as a fully
+static bundle and deployed to a Plesk-hosted origin over rsync.
 
-## Local Development
-
-Install dependencies and start the dev server:
+## Local development
 
 ```bash
 npm ci
-npm run dev
+npm run dev      # http://localhost:4321
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Command           | Does                                            |
+| ----------------- | ----------------------------------------------- |
+| `npm run dev`     | Dev server with hot reload                      |
+| `npm run build`   | Static build into `dist/`                       |
+| `npm run preview` | Serve the built output locally                  |
+| `npm run check`   | Type-check `.astro` and `.ts` files             |
 
-## Docker
+## Domains
 
-This repo ships with a production-ready multi-stage `Dockerfile` that uses Next.js `output: "standalone"` for a smaller runtime image.
+`danielvanginneken.com` is canonical — everything lives there.
 
-Build the image:
+| Domain                    | Behaviour                          |
+| ------------------------- | ---------------------------------- |
+| `danielvanginneken.com`   | The site                           |
+| `danielvanginneken.nl`    | 301 → `.com`                       |
+| `danielvanginneken.dev`   | 301 → `.com/projects`              |
 
-```bash
-docker build \
-  --build-arg NEXT_PUBLIC_SITE_URL=https://danielvanginneken.nl \
-  -t portfolio .
+The redirects are configured in Cloudflare/Plesk and are not part of this repo.
+Every canonical tag, OpenGraph URL, sitemap entry, and RSS link is generated
+from the `site` value in `astro.config.mjs`, so the `.com` origin is the single
+source of truth in markup.
+
+## Structure
+
+```
+src/
+  consts.ts            Identity, socials, nav — edit these first
+  content.config.ts    Collection schemas (projects, writing)
+  content/projects/    One markdown file per project
+  data/now.ts          The /now page content
+  data/uses.ts         The /uses page content
+  lib/url.ts           Path normalisation (see note below)
+  components/          SEO, Nav, Footer, ProjectCard
+  layouts/Layout.astro The only page shell
+  pages/               Routes
+public/
+  .htaccess            Clean URLs + security headers for Apache
 ```
 
-Run the container:
+### Adding a project
 
-```bash
-docker run --rm -p 3000:3000 portfolio
-```
+Drop a markdown file in `src/content/projects/`. The filename becomes the URL
+slug. Frontmatter carries the facts; the body carries the narrative. See
+`src/content.config.ts` for the schema — the build fails on invalid frontmatter,
+which is intentional.
 
-The app listens on port `3000` inside the container.
+### Updating /now
 
-## Plesk / Plain Node Deploy
+Edit `src/data/now.ts`, including the `updated` date.
 
-If you just want to pull the repo on a server, install dependencies, and run the standalone server directly, use:
+## A note on `build.format: 'file'`
 
-```bash
-export NEXT_PUBLIC_SITE_URL=https://danielvanginneken.nl
-export NEXT_TELEMETRY_DISABLED=1
+The build emits `about.html`, not `about/index.html`, so URLs are extensionless
+with no trailing slash. Two consequences:
 
-# Optional but recommended if you ever do rolling deployments
-export NEXT_DEPLOYMENT_ID=$(date +%Y%m%d%H%M%S)
+1. `public/.htaccess` carries the Apache rewrites that serve `/about` from
+   `about.html`. **If the site 404s after a deploy, check that file survived.**
+2. `Astro.url.pathname` is `/about` in dev but `/about.html` during the build.
+   Always normalise with `cleanPath()` from `src/lib/url.ts` before comparing
+   or publishing a path.
 
-npm ci
-npm run build:standalone
-node .next/standalone/server.js
-```
+## Internationalisation
 
-`build:standalone` runs `next build` and then copies `public` and `.next/static` into `.next/standalone` so `.next/standalone/server.js` can serve the app correctly.
+English only today, served from the root (`/about`, not `/en/about`). The i18n
+config is already in place with `prefixDefaultLocale: false`, so adding `nl`
+later is additive — no existing `.com` URL changes.
 
-The app exposes a simple health endpoint at `/api/health`.
+## RSS
 
-## Environment Notes
+`/rss.xml` is wired up and builds, but is deliberately **not linked** anywhere:
+no `<link rel="alternate">`, no nav entry. The `writing` collection is empty by
+design. When real posts exist, add a `/writing` route, the nav item, and the
+alternate link in `src/components/SEO.astro`.
 
-`NEXT_PUBLIC_SITE_URL` is used for canonical URLs, sitemap output, robots metadata, and Open Graph URLs. Because it is a `NEXT_PUBLIC_` variable, provide it at build time when building the Docker image or standalone bundle if you want production metadata to match the deployed domain. If you omit it, the app falls back to `https://danielvanginneken.nl`.
+## Deployment
 
-`NEXT_TELEMETRY_DISABLED=1` disables Next.js telemetry for build and runtime.
+Pushing to `main` triggers `.github/workflows/deploy.yml`: `npm ci` →
+`astro build` → `rsync -avz --delete dist/` to the origin over SSH.
 
-`NEXT_DEPLOYMENT_ID` is optional. When set during build, Next.js uses it for deployment skew protection and cache busting in self-hosted environments.
+Required repository secrets (environment: `production`):
 
-## Production Build
+| Secret                | Value                                            |
+| --------------------- | ------------------------------------------------ |
+| `DEPLOY_SSH_KEY`      | Private key, PEM format, no passphrase           |
+| `DEPLOY_KNOWN_HOSTS`  | Output of `ssh-keyscan -p <port> <host>`         |
+| `DEPLOY_HOST`         | Origin hostname                                  |
+| `DEPLOY_USER`         | SSH user                                         |
+| `DEPLOY_PATH`         | Absolute path to the web root, e.g. `/var/www/vhosts/.../httpdocs` |
+| `DEPLOY_PORT`         | Optional, defaults to `22`                       |
 
-If you want to verify the production build without Docker:
-
-```bash
-npm run build
-npm run start
-```
+The workflow verifies `dist/index.html` and `dist/.htaccess` exist and that at
+least five pages were built before it runs an rsync with `--delete`, so a
+broken build cannot wipe the live site.

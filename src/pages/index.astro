@@ -1,0 +1,144 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { getCollection } from 'astro:content';
+import { SITE } from '../consts';
+
+const projects = (await getCollection('projects', ({ data }) => !data.draft))
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 3);
+---
+
+<Layout title="Home" description={SITE.description} person>
+  <section class="hero wrap">
+    <h1>Software developer with infrastructure roots.</h1>
+    <p class="lede">
+      Early-career, systems-aware, and moving deliberately deeper into software
+      development.
+    </p>
+    <div class="actions">
+      <a class="btn primary" href="/projects">View the work</a>
+      <a class="btn" href="/about">Read my story</a>
+    </div>
+  </section>
+
+  <section class="wrap section">
+    <h2>A bit about me</h2>
+    <div class="prose muted">
+      <p>
+        Most developers start with code. I started with infrastructure: live
+        systems, support environments, and technical operations where
+        reliability is not optional.
+      </p>
+      <p>
+        That foundation still shapes how I build software. I think about
+        dependencies, failure modes, and maintainability as part of the build
+        process, not as an afterthought.
+      </p>
+    </div>
+  </section>
+
+  <section class="wrap section">
+    <div class="section-head">
+      <h2>Featured projects</h2>
+      <a href="/projects" class="see-all">Explore the projects →</a>
+    </div>
+    <p class="lede">
+      The portfolio is still growing, but the direction is already clear:
+      infrastructure-aware engineering, backend security, and software that
+      solves real operational problems.
+    </p>
+    <div class="grid">
+      {projects.map((p) => <ProjectCard project={p} />)}
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero {
+    padding-block: clamp(3.5rem, 10vw, 6rem) clamp(2rem, 6vw, 3rem);
+  }
+
+  .hero h1 {
+    margin-bottom: 1rem;
+    max-width: 18ch;
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 0.6rem 1.15rem;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    transition:
+      background 0.15s ease,
+      border-color 0.15s ease;
+  }
+
+  .btn:hover {
+    background: var(--bg-subtle);
+    border-color: var(--text-faint);
+  }
+
+  .btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  .btn.primary:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+  }
+
+  .section {
+    padding-block: clamp(2rem, 5vw, 3rem);
+  }
+
+  .section h2 {
+    margin-bottom: 1rem;
+  }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .section-head h2 {
+    margin-bottom: 0;
+  }
+
+  .section-head + .lede {
+    margin-top: 0.6rem;
+  }
+
+  .see-all {
+    font-size: 0.9rem;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .see-all:hover {
+    text-decoration: underline;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+    gap: 1rem;
+    margin-top: 1.75rem;
+  }
+</style>

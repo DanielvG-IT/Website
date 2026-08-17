@@ -1,0 +1,100 @@
+---
+/**
+ * Every <head> tag that search engines and social platforms read.
+ *
+ * The canonical URL is always rebuilt from `Astro.site` (the .com origin),
+ * never from the request host. That is what makes the .nl and .dev 301s safe:
+ * even if a page were somehow served from another domain, the markup still
+ * points crawlers at the one canonical origin.
+ */
+import { SITE, SAME_AS } from '../consts';
+import { cleanPath } from '../lib/url';
+
+interface Props {
+  title: string;
+  description: string;
+  /** 'website' for pages, 'article' for writing entries. */
+  ogType?: 'website' | 'article';
+  /** Site-root-relative image path, e.g. '/og.png'. */
+  image?: string;
+  /** Emit Person JSON-LD. Homepage and /about only — one entity, stated twice at most. */
+  person?: boolean;
+  /** Keep a page out of the index (e.g. thank-you pages). */
+  noindex?: boolean;
+  publishedAt?: Date;
+}
+
+const {
+  title,
+  description,
+  ogType = 'website',
+  image = '/og.png',
+  person = false,
+  noindex = false,
+  publishedAt,
+} = Astro.props;
+
+// Astro.site is guaranteed by the `site` key in astro.config.mjs.
+const origin = Astro.site!;
+
+// During the static build this pathname arrives as '/about.html'; cleanPath
+// turns it back into the URL visitors and crawlers actually use.
+const path = cleanPath(Astro.url.pathname);
+const canonical = new URL(path, origin).href;
+const ogImage = new URL(image, origin).href;
+
+// Homepage owns the bare name; every other page is suffixed.
+const fullTitle = path === '/' ? SITE.title : `${title} · ${SITE.title}`;
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: SITE.name,
+  url: origin.href,
+  jobTitle: 'Software Engineering Student',
+  description: SITE.description,
+  sameAs: SAME_AS,
+};
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="generator" content={Astro.generator} />
+
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+
+<!-- OpenGraph -->
+<meta property="og:type" content={ogType} />
+<meta property="og:url" content={canonical} />
+<meta property="og:site_name" content={SITE.title} />
+<meta property="og:locale" content={SITE.ogLocale} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={`${SITE.name} — ${title}`} />
+{publishedAt && <meta property="article:published_time" content={publishedAt.toISOString()} />}
+
+<!-- Twitter / X. No creator handle is set: an unclaimed @handle is worse than none. -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/favicon.ico" sizes="32x32" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+{
+  person && (
+    <script
+      type="application/ld+json"
+      is:inline
+      set:html={JSON.stringify(personSchema)}
+    />
+  )
+}

@@ -1,0 +1,131 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { EMAIL, SOCIALS } from '../consts';
+
+// Reframed from the previous "looking for an internship" wording, which no
+// longer holds — that search is over.
+const welcome = [
+  'Conversations about .NET, TypeScript, React, APIs, and systems-aware engineering.',
+  'Collaborative work where learning, structure, and technical quality are central.',
+  'Opportunities that follow on from my current internship.',
+];
+---
+
+<Layout
+  title="Contact"
+  description="Open to technical discussions, collaborations, and opportunities in software development."
+>
+  <div class="wrap page">
+    <header class="head">
+      <p class="eyebrow">Contact</p>
+      <h1>Open to the right conversations.</h1>
+      <p class="lede">
+        I am currently interning with the IT/AI team at Basic-Fit, and open to
+        technical discussions, collaborations, and opportunities that fit my
+        current stage of development.
+      </p>
+    </header>
+
+    <section class="block">
+      <h2>What I am open to</h2>
+      <ul class="welcome">
+        {welcome.map((w) => <li>{w}</li>)}
+      </ul>
+    </section>
+
+    <section class="block">
+      <h2>Where to reach me</h2>
+      <dl class="channels">
+        <div>
+          <dt>Email</dt>
+          <dd><a href={`mailto:${EMAIL}`}>{EMAIL}</a></dd>
+        </div>
+        <div>
+          <dt>LinkedIn</dt>
+          <dd>
+            <a href={SOCIALS.linkedin} target="_blank" rel="noopener noreferrer">
+              /in/danielvanginneken
+            </a>
+          </dd>
+        </div>
+        <div>
+          <dt>GitHub</dt>
+          <dd>
+            <a href={SOCIALS.github} target="_blank" rel="noopener noreferrer">
+              @DanielvG-IT
+            </a>
+          </dd>
+        </div>
+      </dl>
+      <p class="muted response">
+        I respond to relevant professional enquiries, usually within two working
+        days.
+      </p>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .page {
+    padding-block: clamp(2.5rem, 7vw, 4rem) 0;
+  }
+
+  .head h1 {
+    margin-block: 0.75rem 1rem;
+  }
+
+  .block {
+    margin-top: clamp(2.5rem, 6vw, 3.5rem);
+  }
+
+  .block h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .welcome {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.65rem;
+    max-width: var(--measure);
+  }
+
+  .welcome li {
+    position: relative;
+    padding-left: 1.25rem;
+    color: var(--text-muted);
+  }
+
+  .welcome li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+
+  .channels {
+    margin: 0;
+    display: grid;
+    gap: 1rem;
+    max-width: var(--measure);
+  }
+
+  .channels dt {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  .channels dd {
+    margin: 0.2rem 0 0;
+  }
+
+  .response {
+    margin-top: 1.75rem;
+    font-size: 0.9rem;
+  }
+</style>

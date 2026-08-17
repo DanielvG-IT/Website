@@ -1,0 +1,211 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const sections = [
+  {
+    title: 'Where the technical foundation came from',
+    paragraphs: [
+      'My technical foundation started in support and infrastructure contexts where systems are live and consequences are immediate.',
+      'That environment taught me to stay calm, diagnose carefully, and understand how one change affects everything connected to it.',
+    ],
+  },
+  {
+    title: 'What that background gave me',
+    paragraphs: [
+      'It gave me systems thinking and operational discipline early. I learned to ask what fails, why it fails, and what recovery requires.',
+      'Those habits now carry into software work as attention to structure, reliability, and long-term maintainability.',
+    ],
+  },
+  {
+    title: 'Why software is the direction now',
+    paragraphs: [
+      'The move toward software was not a hard pivot. It was a natural next step from understanding systems to building them more directly.',
+      'I am now focused on .NET, TypeScript, React, and API-driven development while keeping that infrastructure-aware lens.',
+    ],
+  },
+  {
+    title: 'What an internship changed',
+    paragraphs: [
+      'Interning with the IT/AI team at Basic-Fit moved my work from coursework projects to systems other people depend on.',
+      'The difference is mostly in the parts that are not writing code: how changes get reviewed, how software is released, and how a team decides what is worth building. That context is difficult to simulate in a classroom.',
+    ],
+  },
+  {
+    title: 'What kind of builder I want to become',
+    paragraphs: [
+      'I want to build software that is technically clear, operationally responsible, and honest about scope.',
+      'For me, a serious body of work means consistent quality, well-explained decisions, and steady progression over hype.',
+    ],
+  },
+];
+
+/**
+ * Compact progression, folded in from the old standalone Journey page. The
+ * narrative above tells this story properly; this exists because reviewers
+ * scan for dates, and a second page repeating the same arc was not earning
+ * its place in the nav.
+ */
+const timeline = [
+  {
+    period: '2019—2022',
+    title: 'IT systems foundation',
+    detail:
+      'Support and infrastructure environments: Linux, networking, and troubleshooting on live systems.',
+  },
+  {
+    period: '2022—2023',
+    title: 'From operating systems to building them',
+    detail:
+      'Infrastructure work made software questions visible. The interest shifted from fixing systems to designing them.',
+  },
+  {
+    period: '2023—2024',
+    title: 'MBO Level 4 → HBO Informatica',
+    detail:
+      'Completed MBO Level 4 in IT, then started HBO Informatica at Avans Hogeschool.',
+  },
+  {
+    period: '2024—2025',
+    title: 'Projects and technical explorations',
+    detail:
+      'Learning turned into visible output: OpenCaptive, Aegis.Auth, and StrengthSuite.',
+  },
+  {
+    period: 'Now',
+    title: 'Third year, interning at Basic-Fit',
+    detail:
+      'Interning with the IT/AI team while continuing to deepen systems awareness.',
+  },
+];
+---
+
+<Layout
+  title="About"
+  description="Infrastructure first, software by intent — how a background in networking and systems operations shapes the way I build software."
+  person
+>
+  <div class="wrap page">
+    <header class="head">
+      <p class="eyebrow">About</p>
+      <h1>Infrastructure first. Software by intent.</h1>
+      <p class="lede">
+        Before I wrote software, I worked with the systems software depends on:
+        networking, Linux, infrastructure support, and practical troubleshooting
+        in real environments.
+      </p>
+    </header>
+
+    <div class="sections">
+      {
+        sections.map((s) => (
+          <section class="prose">
+            <h2>{s.title}</h2>
+            {s.paragraphs.map((p) => (
+              <p class="muted">{p}</p>
+            ))}
+          </section>
+        ))
+      }
+
+      <section class="timeline-section">
+        <h2>How I got here</h2>
+        <ol class="timeline">
+          {
+            timeline.map((entry) => (
+              <li>
+                <p class="period">{entry.period}</p>
+                <div>
+                  <h3>{entry.title}</h3>
+                  <p class="muted detail">{entry.detail}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </section>
+
+      <section class="prose personal">
+        <h2>Personal context</h2>
+        <p class="muted">
+          I am from the Netherlands, in my third year of HBO Informatica at Avans
+          Hogeschool after completing MBO Level 4 in IT, and currently interning
+          with the IT/AI team at Basic-Fit. Day to day, I am focused on building
+          work that is honest about where I am now and deliberate about where I
+          am going.
+        </p>
+      </section>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .page {
+    padding-block: clamp(2.5rem, 7vw, 4rem) 0;
+  }
+
+  .head h1 {
+    margin-block: 0.75rem 1rem;
+  }
+
+  .sections {
+    margin-top: clamp(2.5rem, 6vw, 3.5rem);
+    display: grid;
+    gap: clamp(2rem, 5vw, 2.75rem);
+  }
+
+  .sections h2 {
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .timeline-section,
+  .personal {
+    border-top: 1px solid var(--border);
+    padding-top: clamp(2rem, 5vw, 2.75rem);
+  }
+
+  .timeline {
+    list-style: none;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .timeline li {
+    display: grid;
+    grid-template-columns: 7.5rem minmax(0, 1fr);
+    gap: 0.25rem 1.5rem;
+    max-width: var(--measure);
+  }
+
+  .timeline h3 {
+    font-size: 1rem;
+    font-weight: 570;
+  }
+
+  .period {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    padding-top: 0.2rem;
+  }
+
+  .detail {
+    margin-top: 0.3rem;
+    font-size: 0.9375rem;
+  }
+
+  /* Stack the period above its entry once the two columns stop fitting. */
+  @media (max-width: 34rem) {
+    .timeline li {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.15rem;
+    }
+    .period {
+      padding-top: 0;
+    }
+  }
+</style>

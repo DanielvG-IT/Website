@@ -1,0 +1,32 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Page not found"
+  description="That page does not exist."
+  noindex
+>
+  <div class="wrap page">
+    <p class="eyebrow">404</p>
+    <h1>That page does not exist.</h1>
+    <p class="lede">
+      The link may be outdated, or the page may have moved during a rebuild.
+    </p>
+    <p><a href="/">Back to the homepage</a></p>
+  </div>
+</Layout>
+
+<style>
+  .page {
+    padding-block: clamp(4rem, 12vw, 8rem);
+  }
+
+  .page h1 {
+    margin-block: 0.75rem 1rem;
+  }
+
+  .page p:last-child {
+    margin-top: 2rem;
+  }
+</style>

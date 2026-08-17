@@ -1,0 +1,90 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { USES } from '../data/uses';
+---
+
+<Layout
+  title="Uses"
+  description="The hardware, editors, languages, and services I actually work with day to day."
+>
+  <div class="wrap page">
+    <header class="head">
+      <p class="eyebrow">Uses</p>
+      <h1>What I work with.</h1>
+      <p class="lede">
+        The tools I actually reach for day to day. Not an aspirational list.
+      </p>
+    </header>
+
+    <div class="groups">
+      {
+        USES.map((group) => (
+          <section>
+            <h2>{group.title}</h2>
+            <dl>
+              {group.items.map((item) => (
+                <div class="row">
+                  <dt>{item.name}</dt>
+                  {item.note && <dd>{item.note}</dd>}
+                </div>
+              ))}
+            </dl>
+          </section>
+        ))
+      }
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .page {
+    padding-block: clamp(2.5rem, 7vw, 4rem) 0;
+  }
+
+  .head h1 {
+    margin-block: 0.75rem 1rem;
+  }
+
+  .groups {
+    margin-top: clamp(2.5rem, 6vw, 3.5rem);
+    display: grid;
+    gap: clamp(2rem, 5vw, 2.5rem);
+  }
+
+  .groups h2 {
+    font-size: 1.125rem;
+    margin-bottom: 1rem;
+  }
+
+  dl {
+    margin: 0;
+    display: grid;
+    gap: 0.75rem;
+    max-width: var(--measure);
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: minmax(0, 12rem) minmax(0, 1fr);
+    gap: 0.5rem 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  @media (max-width: 34rem) {
+    .row {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.15rem;
+    }
+  }
+
+  dt {
+    font-weight: 550;
+  }
+
+  dd {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.9375rem;
+  }
+</style>
