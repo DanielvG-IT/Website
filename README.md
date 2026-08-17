@@ -97,7 +97,7 @@ Required repository secrets (*Settings → Secrets and variables → Actions*):
 | `DEPLOY_KNOWN_HOSTS`  | Output of `ssh-keyscan -p <port> <host>`         |
 | `DEPLOY_HOST`         | Origin hostname                                  |
 | `DEPLOY_USER`         | SSH user                                         |
-| `DEPLOY_PATH`         | Absolute path to the web root, e.g. `/var/www/vhosts/.../httpdocs` |
+| `DEPLOY_PATH`         | `httpdocs` — deliberately relative to the login home, so it resolves correctly whether or not the SSH user is chrooted |
 | `DEPLOY_PORT`         | Optional, defaults to `22`                       |
 
 The workflow verifies `dist/index.html` and `dist/.htaccess` exist and that at
