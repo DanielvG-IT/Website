@@ -21,3 +21,11 @@ updates:
         update-types:
           - "minor"
           - "patch"
+
+  # The deploy workflow holds an SSH key, so keep its actions patched too.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore(ci)"

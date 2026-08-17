@@ -1,0 +1,100 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { getCollection } from 'astro:content';
+
+const all = (await getCollection('projects', ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.order - b.data.order
+);
+
+// Grouped so an early concept is never mistaken for shipped work.
+const groups = [
+  {
+    key: 'featured' as const,
+    label: 'Featured project',
+    intro:
+      'The project that best represents my background, technical focus, and engineering depth.',
+  },
+  {
+    key: 'build' as const,
+    label: 'Selected builds',
+    intro:
+      'Backend security tooling and a platform that translates systems thinking into real product problems.',
+  },
+  {
+    key: 'concept' as const,
+    label: 'Early concept',
+    intro:
+      'An idea not yet in active development, kept here to show the product thinking direction.',
+  },
+].map((g) => ({ ...g, items: all.filter((p) => p.data.category === g.key) }))
+  .filter((g) => g.items.length > 0);
+---
+
+<Layout
+  title="Projects"
+  description="Selected builds and technical explorations across .NET, networking, authentication, and platform architecture."
+>
+  <div class="wrap page">
+    <header class="head">
+      <p class="eyebrow">Projects</p>
+      <h1>Selected builds and technical explorations.</h1>
+      <p class="lede">
+        Most of these projects are currently in the architecture, research, or
+        early implementation phase. I use them as vehicles to explore software
+        engineering, product development, networking, security, and
+        business-oriented problem solving.
+      </p>
+    </header>
+
+    {
+      groups.map((g) => (
+        <section class="group">
+          <h2>{g.label}</h2>
+          <p class="muted intro">{g.intro}</p>
+          <div class:list={['grid', { single: g.items.length === 1 }]}>
+            {g.items.map((p) => (
+              <ProjectCard project={p} featured={g.key === 'featured'} />
+            ))}
+          </div>
+        </section>
+      ))
+    }
+  </div>
+</Layout>
+
+<style>
+  .page {
+    padding-block: clamp(2.5rem, 7vw, 4rem) 0;
+  }
+
+  .head h1 {
+    margin-block: 0.75rem 1rem;
+  }
+
+  .group {
+    margin-top: clamp(2.5rem, 6vw, 3.5rem);
+  }
+
+  .group h2 {
+    font-size: 1.25rem;
+  }
+
+  .intro {
+    margin-top: 0.4rem;
+    max-width: var(--measure);
+    font-size: 0.9375rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  /* A lone card shouldn't stretch to full width on a wide screen. */
+  .grid.single {
+    grid-template-columns: minmax(0, 1fr);
+  }
+</style>

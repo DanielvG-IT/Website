@@ -1,0 +1,73 @@
+---
+import { SITE, SOCIALS, EMAIL } from '../consts';
+
+const year = new Date().getFullYear();
+
+// Only render links that actually exist, so an unset YouTube URL emits nothing
+// rather than a dead anchor.
+const links = [
+  { href: SOCIALS.github, label: 'GitHub' },
+  { href: SOCIALS.linkedin, label: 'LinkedIn' },
+  { href: SOCIALS.youtube, label: 'YouTube' },
+].filter((l) => l.href);
+---
+
+<footer class="site-footer">
+  <div class="wrap inner">
+    <p class="copy">© {year} {SITE.name}</p>
+
+    <ul class="links">
+      {
+        links.map((l) => (
+          <li>
+            <a href={l.href} rel="me noopener noreferrer" target="_blank">
+              {l.label}
+            </a>
+          </li>
+        ))
+      }
+      <li><a href={`mailto:${EMAIL}`}>Email</a></li>
+    </ul>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--border);
+    margin-top: var(--stack);
+    padding-block: 2rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+
+  .inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .copy {
+    margin: 0;
+  }
+
+  .links {
+    display: flex;
+    gap: 1.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex-wrap: wrap;
+  }
+
+  .links a {
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .links a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+</style>

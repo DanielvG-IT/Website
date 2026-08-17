@@ -1,0 +1,74 @@
+# Apache config for the Plesk origin.
+#
+# Lives in public/ so Astro copies it to dist/ and rsync ships it with the site.
+#
+# Two jobs: serve extensionless URLs (the build emits /about.html but the
+# canonical URL is /about), and set the security headers the old Next.js
+# config used to send at runtime. A static host has no server code, so these
+# have to live here.
+
+# ── Clean URLs ────────────────────────────────────────────────────
+# mod_negotiation would guess at extensions and can serve the wrong variant.
+Options -MultiViews
+
+# /projects is both a real directory (project pages) and a page (projects.html).
+# Without this, mod_dir 301s /projects to /projects/ before our rewrites run.
+DirectorySlash Off
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Canonical form is no trailing slash. Root is left alone.
+  RewriteCond %{REQUEST_URI} ^(.+)/$
+  RewriteRule ^(.+)/$ /$1 [R=301,L]
+
+  # A direct request for /about.html redirects to /about, so each page has
+  # exactly one indexable URL. REDIRECT_STATUS is empty only on the initial
+  # external request, which stops this looping against the rewrite below.
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteRule ^(.+)\.html$ /$1 [R=301,L]
+
+  # Serve /about from about.html without changing the URL.
+  RewriteCond %{REQUEST_FILENAME}.html -f
+  RewriteRule ^(.+)$ $1.html [L]
+</IfModule>
+
+ErrorDocument 404 /404.html
+
+# ── Security headers ──────────────────────────────────────────────
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "DENY"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Cross-Origin-Opener-Policy "same-origin"
+  Header always set Cross-Origin-Resource-Policy "same-origin"
+  Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), accelerometer=(), autoplay=(), display-capture=()"
+
+  # script-src keeps 'unsafe-inline' because the Person JSON-LD is an inline
+  # <script> block, which CSP governs under script-src. style-src keeps it
+  # because Astro inlines critical CSS. Everything else is locked to self.
+  Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; frame-src 'none'; object-src 'none'; worker-src 'none'; manifest-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; upgrade-insecure-requests"
+
+  # Only /_astro/ filenames carry a content hash, so only those are safe to
+  # freeze. Hand-placed files in public/ (portrait.jpg, favicons) keep a short
+  # TTL — otherwise replacing one leaves stale copies cached for a year.
+  <IfModule mod_setenvif.c>
+    SetEnvIf Request_URI "^/_astro/" HASHED_ASSET
+    Header set Cache-Control "public, max-age=31536000, immutable" env=HASHED_ASSET
+  </IfModule>
+
+  <FilesMatch "\.(?:woff2?|png|jpg|jpeg|webp|avif|ico|svg)$">
+    Header setifempty Cache-Control "public, max-age=86400"
+  </FilesMatch>
+  <FilesMatch "\.(?:html|xml|txt)$">
+    Header set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+# ── Compression ───────────────────────────────────────────────────
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml
+  AddOutputFilterByType DEFLATE application/javascript application/json
+  AddOutputFilterByType DEFLATE application/xml image/svg+xml
+</IfModule>

@@ -1,0 +1,44 @@
+---
+/**
+ * The only page shell. Every route renders through here, which is what keeps
+ * the <head> contract (canonical, OG, JSON-LD) impossible to forget.
+ */
+import SEO from '../components/SEO.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../consts';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  ogType?: 'website' | 'article';
+  image?: string;
+  person?: boolean;
+  noindex?: boolean;
+  publishedAt?: Date;
+}
+
+const { title, description, ...seo } = Astro.props;
+---
+
+<!doctype html>
+<html lang={SITE.locale}>
+  <head>
+    <SEO title={title} description={description} {...seo} />
+  </head>
+  <body>
+    <a href="#main" class="skip-link">Skip to content</a>
+    <Nav />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  main {
+    flex: 1;
+  }
+</style>

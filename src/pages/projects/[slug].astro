@@ -1,0 +1,214 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+
+export const getStaticPaths = (async () => {
+  const projects = await getCollection('projects', ({ data }) => !data.draft);
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}) satisfies GetStaticPaths;
+
+const { project } = Astro.props;
+const { title, summary, status, technologies, outcomes, repo, link } =
+  project.data;
+
+// `render` is the Astro 5+ form; the old `entry.render()` method is gone.
+const { Content } = await render(project);
+---
+
+<Layout title={title} description={summary}>
+  <article class="wrap page">
+    <nav class="back" aria-label="Breadcrumb">
+      <a href="/projects">← All projects</a>
+    </nav>
+
+    <header class="head">
+      <p class="eyebrow">{status}</p>
+      <h1>{title}</h1>
+      <p class="lede">{summary}</p>
+
+      {
+        (repo || link) && (
+          <div class="links">
+            {repo && (
+              <a class="btn" href={repo} target="_blank" rel="noopener noreferrer">
+                View source
+              </a>
+            )}
+            {link && (
+              <a class="btn" href={link} target="_blank" rel="noopener noreferrer">
+                Visit project
+              </a>
+            )}
+          </div>
+        )
+      }
+    </header>
+
+    <div class="body">
+      <div class="prose content">
+        <Content />
+      </div>
+
+      <aside class="meta">
+        {
+          technologies.length > 0 && (
+            <section>
+              <h2>Technologies</h2>
+              <ul class="tags">
+                {technologies.map((t) => (
+                  <li>{t}</li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+
+        {
+          outcomes.length > 0 && (
+            <section>
+              <h2>What I learned</h2>
+              <ul class="outcomes">
+                {outcomes.map((o) => (
+                  <li>{o}</li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+      </aside>
+    </div>
+  </article>
+</Layout>
+
+<style>
+  .page {
+    padding-block: clamp(2rem, 6vw, 3rem) 0;
+  }
+
+  .back a {
+    font-size: 0.875rem;
+    text-decoration: none;
+    color: var(--text-muted);
+  }
+
+  .back a:hover {
+    color: var(--accent);
+  }
+
+  .head {
+    margin-top: 1.75rem;
+  }
+
+  .head h1 {
+    margin-block: 0.5rem 1rem;
+  }
+
+  .links {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+
+  .btn:hover {
+    background: var(--bg-subtle);
+  }
+
+  .body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 16rem;
+    gap: clamp(2rem, 5vw, 3.5rem);
+    margin-top: clamp(2.5rem, 6vw, 3.5rem);
+    align-items: start;
+  }
+
+  @media (max-width: 52rem) {
+    .body {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  .content :global(h2) {
+    font-size: 1.25rem;
+    margin-top: 2rem;
+  }
+
+  .content :global(h2:first-child) {
+    margin-top: 0;
+  }
+
+  .content :global(p) {
+    color: var(--text-muted);
+    margin-top: 0.85rem;
+  }
+
+  .meta section + section {
+    margin-top: 2rem;
+  }
+
+  .meta h2 {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    font-weight: 500;
+    margin-bottom: 0.85rem;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .tags li {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.15rem 0.55rem;
+  }
+
+  .outcomes {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .outcomes li {
+    position: relative;
+    padding-left: 1rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+
+  .outcomes li::before {
+    content: '·';
+    position: absolute;
+    left: 0.25rem;
+    color: var(--accent);
+    font-weight: 700;
+  }
+</style>

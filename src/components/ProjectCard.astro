@@ -1,0 +1,169 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  /** Featured cards get the larger treatment on /projects and the homepage. */
+  featured?: boolean;
+}
+
+const { project, featured = false } = Astro.props;
+const { title, summary, status, technologies } = project.data;
+
+// Cards show a trimmed stack; the detail page lists everything.
+const shown = technologies.slice(0, featured ? 6 : 4);
+const rest = technologies.length - shown.length;
+---
+
+<article class:list={['card', { featured }]}>
+  <div class="head">
+    <h3>
+      <a href={`/projects/${project.id}`}>
+        {title}
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </h3>
+    <p class="status">{status}</p>
+  </div>
+
+  <p class="summary">{summary}</p>
+
+  {
+    shown.length > 0 && (
+      <ul class="tech" aria-label="Technologies">
+        {shown.map((t) => (
+          <li>{t}</li>
+        ))}
+        {rest > 0 && <li class="more">+{rest}</li>}
+      </ul>
+    )
+  }
+</article>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-raised);
+    transition:
+      border-color 0.15s ease,
+      transform 0.15s ease;
+  }
+
+  .card:hover {
+    border-color: var(--border-strong);
+  }
+
+  .card:hover .arrow {
+    transform: translateX(3px);
+  }
+
+  .featured {
+    padding: 2rem;
+    background: linear-gradient(
+      to bottom right,
+      var(--accent-subtle),
+      var(--bg-raised) 55%
+    );
+  }
+
+  .head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 1.1875rem;
+  }
+
+  .featured h3 {
+    font-size: 1.5rem;
+  }
+
+  h3 a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  /* Expand the click target to the whole card without nesting interactive
+     elements — the anchor still owns focus and the accessible name. */
+  h3 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .card {
+    position: relative;
+  }
+
+  h3 a:hover {
+    color: var(--accent);
+  }
+
+  .arrow {
+    display: inline-block;
+    margin-left: 0.3em;
+    transition: transform 0.15s ease;
+    color: var(--accent);
+  }
+
+  .status {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin: 0;
+    text-align: right;
+  }
+
+  /* Once the header wraps, the status sits under the title — right-aligning a
+     wrapped line there just looks ragged. */
+  @media (max-width: 40rem) {
+    .status {
+      text-align: left;
+    }
+  }
+
+  .summary {
+    color: var(--text-muted);
+    font-size: 0.9375rem;
+    margin: 0;
+  }
+
+  .featured .summary {
+    font-size: 1.0625rem;
+  }
+
+  .tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    list-style: none;
+    margin: 0.25rem 0 0;
+    padding: 0;
+  }
+
+  .tech li {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.15rem 0.55rem;
+  }
+
+  .tech .more {
+    color: var(--text-faint);
+  }
+</style>

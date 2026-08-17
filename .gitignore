@@ -4,23 +4,12 @@
 node_modules/
 .pnp
 .pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
 
 # --------------------------------------
-# Next.js build output
+# Astro build output & generated types
 # --------------------------------------
-.next/
-out/
-build/
-
-# --------------------------------------
-# Test / coverage
-# --------------------------------------
-coverage/
+dist/
+.astro/
 
 # --------------------------------------
 # Logs
@@ -34,18 +23,9 @@ pnpm-debug.log*
 # --------------------------------------
 # Environment files
 # --------------------------------------
+.env
+.env.production
 .env*.local
-
-# --------------------------------------
-# Vercel
-# --------------------------------------
-.vercel/
-
-# --------------------------------------
-# TypeScript
-# --------------------------------------
-*.tsbuildinfo
-next-env.d.ts
 
 # --------------------------------------
 # OS / editor misc

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="14" fill="#0b0f14"/>
+  <rect x="1.25" y="1.25" width="61.5" height="61.5" rx="12.75" fill="none" stroke="#64aae4" stroke-opacity="0.35" stroke-width="1.5"/>
+  <text x="32" y="33" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="34" font-weight="600"
+        fill="#e6edf3" text-anchor="middle" dominant-baseline="central">D</text>
+  <rect x="22" y="46" width="20" height="2.5" rx="1.25" fill="#64aae4"/>
+</svg>

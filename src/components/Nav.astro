@@ -1,0 +1,105 @@
+---
+import { NAV, SITE } from '../consts';
+import { cleanPath } from '../lib/url';
+
+// Mark the active item. A section is active for its own page and its children,
+// so /projects/opencaptive still highlights "Projects".
+const path = cleanPath(Astro.url.pathname);
+const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
+---
+
+<header class="site-header">
+  <nav class="wrap nav" aria-label="Primary">
+    <a href="/" class="brand" aria-current={path === '/' ? 'page' : undefined}>
+      {SITE.name}
+    </a>
+
+    <ul class="links">
+      {
+        NAV.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              aria-current={isActive(item.href) ? 'page' : undefined}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: 1px solid var(--border);
+    background: color-mix(in srgb, var(--bg) 85%, transparent);
+    backdrop-filter: blur(8px);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    min-height: 4rem;
+    flex-wrap: wrap;
+  }
+
+  .brand {
+    font-weight: 620;
+    color: var(--text);
+    text-decoration: none;
+    letter-spacing: -0.015em;
+    white-space: nowrap;
+  }
+
+  .brand:hover {
+    color: var(--accent);
+  }
+
+  .links {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.75rem, 2.5vw, 1.5rem);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex-wrap: wrap;
+  }
+
+  .links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.9375rem;
+    padding-block: 0.35rem;
+    border-bottom: 1.5px solid transparent;
+    transition: color 0.15s ease;
+  }
+
+  .links a:hover {
+    color: var(--text);
+  }
+
+  .links a[aria-current='page'] {
+    color: var(--text);
+    border-bottom-color: var(--accent);
+  }
+
+  /* Below ~34rem the brand and the five links stack rather than crowd. */
+  @media (max-width: 34rem) {
+    .nav {
+      justify-content: center;
+      padding-block: 0.75rem;
+      row-gap: 0.5rem;
+    }
+    .links {
+      justify-content: center;
+      width: 100%;
+    }
+  }
+</style>
