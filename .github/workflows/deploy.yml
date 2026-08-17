@@ -16,7 +16,6 @@ jobs:
   deploy:
     name: Build and deploy to Plesk
     runs-on: ubuntu-latest
-    environment: production
     permissions:
       contents: read
 
