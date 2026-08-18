@@ -16,6 +16,7 @@ export const NOW = {
       items: [
         "Deepening my knowledge of .NET and C# for backend and API development.",
         "Getting more comfortable with TypeScript, React, and building complete applications end to end.",
+        "Building and running DentechSync in production at Dentech — a system connecting internal tools and automating operational workflows.",
         "Learning to think more about architecture, maintainability, deployment, and reliability instead of only making features work.",
       ],
     },
@@ -31,7 +32,6 @@ export const NOW = {
       title: "Building on the side",
       items: [
         "OpenCaptive — an open-source captive portal platform, currently being shaped into a proper multi-tenant product.",
-        "DentechSync — an internal platform for connecting systems and automating operational workflows.",
         "This portfolio — built in Astro as a fast, static site and used as a place to document the work.",
       ],
     },
