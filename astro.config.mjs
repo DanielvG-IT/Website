@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
+import { defineConfig, fontProviders } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
@@ -22,6 +22,41 @@ export default defineConfig({
   },
 
   integrations: [sitemap()],
+
+  // Fonts are downloaded at build time and emitted into _astro/fonts/, so they
+  // are served from our own origin. This is not a preference — the CSP in
+  // public/.htaccess sets `font-src 'self' data:`, so a <link> to Google Fonts
+  // would be blocked in the browser. Weights are listed explicitly: every extra
+  // weight is another file on the critical path.
+  fonts: [
+    {
+      provider: fontProviders.google(),
+      name: 'Space Grotesk',
+      cssVariable: '--font-display',
+      weights: ['500', '700'],
+      styles: ['normal'],
+      subsets: ['latin'],
+      fallbacks: ['ui-sans-serif', 'system-ui', 'sans-serif'],
+    },
+    {
+      provider: fontProviders.google(),
+      name: 'Inter',
+      cssVariable: '--font-sans',
+      weights: ['400', '500', '600'],
+      styles: ['normal'],
+      subsets: ['latin'],
+      fallbacks: ['ui-sans-serif', 'system-ui', 'sans-serif'],
+    },
+    {
+      provider: fontProviders.google(),
+      name: 'JetBrains Mono',
+      cssVariable: '--font-mono',
+      weights: ['400', '500'],
+      styles: ['normal'],
+      subsets: ['latin'],
+      fallbacks: ['ui-monospace', 'SFMono-Regular', 'monospace'],
+    },
+  ],
 
   build: {
     // Emit /about.html rather than /about/index.html so Apache serves clean

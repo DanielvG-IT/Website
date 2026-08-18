@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import PageHeader from '../components/PageHeader.astro';
 import { NOW } from '../data/now';
 
 const updated = new Date(NOW.updated);
@@ -14,24 +15,25 @@ const formatted = updated.toLocaleDateString('en-GB', {
   title="Now"
   description="What I am working on, learning, and building at the moment."
 >
-  <div class="wrap page">
-    <header class="head">
-      <p class="eyebrow">Now</p>
-      <h1>What I am focused on right now.</h1>
-      <p class="lede">{NOW.intro}</p>
-      <p class="updated">
-        Last updated <time datetime={NOW.updated}>{formatted}</time>
-      </p>
-    </header>
+  <PageHeader label="Now" meta={`Updated ${formatted}`}>
+    <span slot="title">What I am focused on right now.</span>
+    {NOW.intro}
+  </PageHeader>
 
+  <div class="wrap">
     <div class="sections">
       {
-        NOW.sections.map((s) => (
-          <section>
-            <h2>{s.title}</h2>
+        NOW.sections.map((s, i) => (
+          <section class="block surface">
+            <div class="block-head">
+              <span class="num" aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <h2>{s.title}</h2>
+            </div>
             <ul>
-              {s.items.map((i) => (
-                <li>{i}</li>
+              {s.items.map((item) => (
+                <li>{item}</li>
               ))}
             </ul>
           </section>
@@ -40,61 +42,76 @@ const formatted = updated.toLocaleDateString('en-GB', {
     </div>
 
     <p class="muted note">
-      This is a <a href="https://nownownow.com/about" target="_blank" rel="noopener noreferrer">now page</a>.
-      It describes a point in time, not a permanent position.
+      This is a <a
+        href="https://nownownow.com/about"
+        target="_blank"
+        rel="noopener noreferrer">now page</a
+      >. It describes a point in time, not a permanent position.
     </p>
   </div>
 </Layout>
 
 <style>
-  .page {
-    padding-block: clamp(2.5rem, 7vw, 4rem) 0;
-  }
-
-  .head h1 {
-    margin-block: 0.75rem 1rem;
-  }
-
-  .updated {
-    margin-top: 1.25rem;
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text-faint);
-  }
-
   .sections {
-    margin-top: clamp(2.5rem, 6vw, 3.5rem);
+    margin-top: clamp(1.5rem, 4vw, 2.5rem);
     display: grid;
-    gap: clamp(2rem, 5vw, 2.5rem);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    gap: 1rem;
+    align-items: start;
   }
 
-  .sections h2 {
-    font-size: 1.125rem;
-    margin-bottom: 0.85rem;
+  .block {
+    padding: 1.6rem;
   }
 
-  .sections ul {
+  .block-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding-bottom: 0.9rem;
+    margin-bottom: 1.1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .num {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+  }
+
+  .block h2 {
+    font-size: 1.0625rem;
+    letter-spacing: -0.01em;
+  }
+
+  .block ul {
     list-style: none;
     padding: 0;
     margin: 0;
     display: grid;
-    gap: 0.55rem;
-    max-width: var(--measure);
+    gap: 0.8rem;
   }
 
-  .sections li {
+  .block li {
     position: relative;
-    padding-left: 1.25rem;
+    padding-left: 1.15rem;
     color: var(--text-muted);
+    font-size: 0.9375rem;
   }
 
-  .sections li::before {
-    content: '—';
+  /* A small accent square rather than a bullet — reads as a checklist marker
+     without borrowing a checkmark's "done" meaning. */
+  .block li::before {
+    content: '';
     position: absolute;
     left: 0;
-    color: var(--text-faint);
+    top: 0.62em;
+    width: 5px;
+    height: 5px;
+    border-radius: 1.5px;
+    background: var(--gradient);
   }
 
   .note {

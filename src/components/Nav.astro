@@ -6,12 +6,20 @@ import { cleanPath } from '../lib/url';
 // so /projects/opencaptive still highlights "Projects".
 const path = cleanPath(Astro.url.pathname);
 const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
+
+// Monogram for the brand mark: "Daniël van Ginneken" → "DG".
+const initials = SITE.name
+  .split(' ')
+  .filter((part) => /^[A-Z]/.test(part))
+  .map((part) => part[0])
+  .join('');
 ---
 
 <header class="site-header">
   <nav class="wrap nav" aria-label="Primary">
     <a href="/" class="brand" aria-current={path === '/' ? 'page' : undefined}>
-      {SITE.name}
+      <span class="mark" aria-hidden="true">{initials}</span>
+      <span class="name">{SITE.name}</span>
     </a>
 
     <ul class="links">
@@ -33,12 +41,30 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
 
 <style>
   .site-header {
-    border-bottom: 1px solid var(--border);
-    background: color-mix(in srgb, var(--bg) 85%, transparent);
-    backdrop-filter: blur(8px);
     position: sticky;
     top: 0;
-    z-index: 20;
+    z-index: 30;
+    background: color-mix(in srgb, var(--bg) 78%, transparent);
+    backdrop-filter: blur(14px) saturate(150%);
+    border-bottom: 1px solid transparent;
+    /* The border only appears once the page scrolls under the bar. Without
+       animation-timeline support it stays invisible, which is the safe end. */
+    transition: border-color 0.2s ease;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .site-header {
+      animation: stick linear both;
+      animation-timeline: scroll();
+      animation-range: 0 5rem;
+    }
+
+    @keyframes stick {
+      to {
+        border-bottom-color: var(--border);
+        background: color-mix(in srgb, var(--bg) 88%, transparent);
+      }
+    }
   }
 
   .nav {
@@ -46,26 +72,47 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
     align-items: center;
     justify-content: space-between;
     gap: 1.5rem;
-    min-height: 4rem;
+    min-height: 4.5rem;
     flex-wrap: wrap;
   }
 
   .brand {
-    font-weight: 620;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
     color: var(--text);
     text-decoration: none;
-    letter-spacing: -0.015em;
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
     white-space: nowrap;
   }
 
-  .brand:hover {
+  .mark {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 9px;
+    background: var(--gradient);
+    color: var(--on-accent);
+    font-size: 0.75rem;
+    letter-spacing: 0;
+    flex: none;
+  }
+
+  .brand:hover .name {
     color: var(--accent);
+  }
+
+  .name {
+    transition: color 0.15s ease;
   }
 
   .links {
     display: flex;
     align-items: center;
-    gap: clamp(0.75rem, 2.5vw, 1.5rem);
+    gap: 0.15rem;
     list-style: none;
     margin: 0;
     padding: 0;
@@ -73,33 +120,72 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
   }
 
   .links a {
+    display: block;
     color: var(--text-muted);
     text-decoration: none;
     font-size: 0.9375rem;
-    padding-block: 0.35rem;
-    border-bottom: 1.5px solid transparent;
-    transition: color 0.15s ease;
+    font-weight: 500;
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--radius-pill);
+    transition:
+      color 0.15s ease,
+      background 0.15s ease;
   }
 
   .links a:hover {
     color: var(--text);
+    background: var(--bg-subtle);
   }
 
   .links a[aria-current='page'] {
-    color: var(--text);
-    border-bottom-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-subtle);
   }
 
-  /* Below ~34rem the brand and the five links stack rather than crowd. */
-  @media (max-width: 34rem) {
+  /* Below ~40rem the five links become a horizontally scrollable row rather
+     than wrapping into a second ragged line under the brand. */
+  @media (max-width: 40rem) {
     .nav {
-      justify-content: center;
-      padding-block: 0.75rem;
-      row-gap: 0.5rem;
+      justify-content: space-between;
+      padding-block: 0.7rem;
+      row-gap: 0.4rem;
+      min-height: 0;
+    }
+
+    .name {
+      /* The monogram carries the brand once space is tight. */
+      display: none;
+    }
+
+    .links {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+      /* Bleed to the screen edges so the last item does not look clipped. */
+      margin-inline: calc(var(--gutter) * -1);
+      padding-inline: var(--gutter);
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .links::-webkit-scrollbar {
+      display: none;
+    }
+
+    .links a {
+      padding-inline: 0.6rem;
+    }
+  }
+
+  @media (max-width: 26rem) {
+    .brand {
+      /* Two rows: monogram + name on top, the scroller underneath. */
+      order: -1;
     }
     .links {
-      justify-content: center;
       width: 100%;
+    }
+    .name {
+      display: inline;
     }
   }
 </style>

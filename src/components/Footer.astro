@@ -1,73 +1,153 @@
 ---
-import { SITE, SOCIALS, EMAIL } from '../consts';
+import { SITE, NAV, EMAIL } from '../consts';
+import SocialLinks from './SocialLinks.astro';
 
 const year = new Date().getFullYear();
 
-// Only render links that actually exist, so an unset YouTube URL emits nothing
-// rather than a dead anchor.
-const links = [
-  { href: SOCIALS.github, label: 'GitHub' },
-  { href: SOCIALS.linkedin, label: 'LinkedIn' },
-  { href: SOCIALS.youtube, label: 'YouTube' },
-].filter((l) => l.href);
+// Monogram matches the nav brand mark.
+const initials = SITE.name
+  .split(' ')
+  .filter((part) => /^[A-Z]/.test(part))
+  .map((part) => part[0])
+  .join('');
 ---
 
 <footer class="site-footer">
   <div class="wrap inner">
-    <p class="copy">© {year} {SITE.name}</p>
+    <div class="brand-col">
+      <a href="/" class="brand">
+        <span class="mark" aria-hidden="true">{initials}</span>
+        <span>{SITE.name}</span>
+      </a>
+      <p class="tagline muted">
+        Software developer with infrastructure roots. Based in the Netherlands.
+      </p>
+      <SocialLinks email />
+    </div>
 
-    <ul class="links">
-      {
-        links.map((l) => (
-          <li>
-            <a href={l.href} rel="me noopener noreferrer" target="_blank">
-              {l.label}
-            </a>
-          </li>
-        ))
-      }
-      <li><a href={`mailto:${EMAIL}`}>Email</a></li>
-    </ul>
+    <nav class="nav-col" aria-label="Footer">
+      <p class="col-title">Pages</p>
+      <ul>
+        <li><a href="/">Home</a></li>
+        {NAV.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+      </ul>
+    </nav>
+
+    <div class="contact-col">
+      <p class="col-title">Get in touch</p>
+      <p><a href={`mailto:${EMAIL}`}>{EMAIL}</a></p>
+    </div>
+  </div>
+
+  <div class="wrap bottom">
+    <p>© {year} {SITE.name}</p>
+    <p class="built">Built with Astro. Deployed as a static bundle.</p>
   </div>
 </footer>
 
 <style>
   .site-footer {
-    border-top: 1px solid var(--border);
     margin-top: var(--stack);
-    padding-block: 2rem;
+    padding-top: clamp(2.5rem, 6vw, 3.5rem);
+    border-top: 1px solid var(--border);
+    background: var(--bg-subtle);
     font-size: 0.9rem;
     color: var(--text-muted);
   }
 
   .inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(2rem, 5vw, 3rem);
+    padding-bottom: clamp(2rem, 5vw, 3rem);
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--text);
+    text-decoration: none;
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .mark {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 9px;
+    background: var(--gradient);
+    color: var(--on-accent);
+    font-size: 0.75rem;
+    letter-spacing: 0;
+    flex: none;
+  }
+
+  .tagline {
+    margin: 1rem 0 1.25rem;
+    max-width: 34ch;
+    font-size: 0.875rem;
+  }
+
+  .col-title {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 0.9rem;
+  }
+
+  /* The address is one long unbreakable token and was widening the whole
+     document on a 390px viewport. */
+  .contact-col a {
+    overflow-wrap: anywhere;
+  }
+
+  .nav-col ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .site-footer a:not(.brand) {
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .site-footer a:not(.brand):hover {
+    color: var(--accent);
+  }
+
+  .bottom {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
     flex-wrap: wrap;
+    padding-block: 1.25rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.8125rem;
+    color: var(--text-faint);
   }
 
-  .copy {
-    margin: 0;
+  .built {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
   }
 
-  .links {
-    display: flex;
-    gap: 1.25rem;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    flex-wrap: wrap;
-  }
+  @media (max-width: 48rem) {
+    .inner {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
 
-  .links a {
-    color: var(--text-muted);
-    text-decoration: none;
-  }
-
-  .links a:hover {
-    color: var(--accent);
-    text-decoration: underline;
+    .brand-col {
+      grid-column: 1 / -1;
+    }
   }
 </style>

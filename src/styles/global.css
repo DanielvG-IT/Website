@@ -8,75 +8,109 @@
  * Theming: light palette on bare :root, dark overrides in a media query that
  * yields to an explicit [data-theme="light"], plus a [data-theme="dark"] block
  * so a future toggle wins in both directions.
+ *
+ * NOTE ON FONTS: --font-display / --font-sans / --font-mono are NOT declared
+ * here. Astro's font pipeline defines them (see `fonts` in astro.config.mjs and
+ * the <Font> tags in Layout.astro). Redeclaring them here would race the
+ * cascade and silently win or lose depending on stylesheet order.
  */
 
 :root {
   color-scheme: light dark;
 
   /* Surfaces */
-  --bg: #fcfcfd;
-  --bg-subtle: #f4f5f7;
+  --bg: #fbfbfd;
+  --bg-subtle: #f2f4f8;
   --bg-raised: #ffffff;
-  --border: #e2e5ea;
-  --border-strong: #cdd2da;
+  --border: #e4e7ee;
+  --border-strong: #cfd4e0;
 
   /* Text */
-  --text: #14181d;
-  --text-muted: #5b6672;
-  --text-faint: #8b95a1;
+  --text: #0e1116;
+  --text-muted: #525c6e;
+  --text-faint: #828c9e;
 
-  /* Accent */
-  --accent: #1f6fb2;
-  --accent-hover: #17588e;
-  --accent-subtle: #e8f1f9;
+  /* Accent — a primary and a secondary that only ever meet inside gradients. */
+  --accent: #2f55e6;
+  --accent-hover: #2444c4;
+  --accent-2: #8b3dff;
+  --accent-subtle: #eef1ff;
+  --accent-ring: rgb(47 85 230 / 0.28);
+  --on-accent: #ffffff;
 
-  /* Type scale */
-  --font-sans:
-    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Inter, Roboto,
-    'Helvetica Neue', Arial, sans-serif;
-  --font-mono:
-    ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
-    'Liberation Mono', monospace;
+  /* Decorative */
+  --gradient: linear-gradient(100deg, var(--accent), var(--accent-2));
+  --glow-1: rgb(47 85 230 / 0.16);
+  --glow-2: rgb(139 61 255 / 0.13);
+  --dot: rgb(14 17 22 / 0.07);
+
+  --shadow-sm: 0 1px 2px rgb(14 17 22 / 0.04);
+  --shadow-md: 0 6px 20px -6px rgb(14 17 22 / 0.1);
+  --shadow-lg: 0 24px 60px -20px rgb(14 17 22 / 0.22);
 
   /* Rhythm */
-  --measure: 68ch;
+  --measure: 66ch;
   --gutter: clamp(1.25rem, 5vw, 2.5rem);
   --stack: clamp(3rem, 8vw, 5.5rem);
-  --radius: 10px;
+  --radius: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --bg: #0b0f14;
-    --bg-subtle: #11171e;
-    --bg-raised: #141b23;
-    --border: #222c37;
-    --border-strong: #33404e;
+    --bg: #0a0b10;
+    --bg-subtle: #101219;
+    --bg-raised: #14161f;
+    --border: #232734;
+    --border-strong: #333949;
 
-    --text: #e6edf3;
-    --text-muted: #9aa7b4;
-    --text-faint: #6b7885;
+    --text: #f2f4f8;
+    --text-muted: #a0a8bb;
+    --text-faint: #6d778e;
 
-    --accent: #64aae4;
-    --accent-hover: #8cc2ef;
-    --accent-subtle: #142433;
+    --accent: #6f97ff;
+    --accent-hover: #93b1ff;
+    --accent-2: #b07dff;
+    --accent-subtle: #151a2c;
+    --accent-ring: rgb(111 151 255 / 0.32);
+    --on-accent: #07090f;
+
+    --glow-1: rgb(111 151 255 / 0.18);
+    --glow-2: rgb(176 125 255 / 0.14);
+    --dot: rgb(242 244 248 / 0.07);
+
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+    --shadow-md: 0 6px 20px -6px rgb(0 0 0 / 0.55);
+    --shadow-lg: 0 24px 60px -20px rgb(0 0 0 / 0.75);
   }
 }
 
 :root[data-theme='dark'] {
-  --bg: #0b0f14;
-  --bg-subtle: #11171e;
-  --bg-raised: #141b23;
-  --border: #222c37;
-  --border-strong: #33404e;
+  --bg: #0a0b10;
+  --bg-subtle: #101219;
+  --bg-raised: #14161f;
+  --border: #232734;
+  --border-strong: #333949;
 
-  --text: #e6edf3;
-  --text-muted: #9aa7b4;
-  --text-faint: #6b7885;
+  --text: #f2f4f8;
+  --text-muted: #a0a8bb;
+  --text-faint: #6d778e;
 
-  --accent: #64aae4;
-  --accent-hover: #8cc2ef;
-  --accent-subtle: #142433;
+  --accent: #6f97ff;
+  --accent-hover: #93b1ff;
+  --accent-2: #b07dff;
+  --accent-subtle: #151a2c;
+  --accent-ring: rgb(111 151 255 / 0.32);
+  --on-accent: #07090f;
+
+  --glow-1: rgb(111 151 255 / 0.18);
+  --glow-2: rgb(176 125 255 / 0.14);
+  --dot: rgb(242 244 248 / 0.07);
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 6px 20px -6px rgb(0 0 0 / 0.55);
+  --shadow-lg: 0 24px 60px -20px rgb(0 0 0 / 0.75);
 }
 
 *,
@@ -115,6 +149,9 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  /* The hero's glows are absolutely positioned and would otherwise widen the
+     page on narrow screens. */
+  overflow-x: hidden;
 }
 
 h1,
@@ -122,20 +159,22 @@ h2,
 h3,
 h4 {
   margin: 0;
-  line-height: 1.2;
-  font-weight: 620;
-  letter-spacing: -0.018em;
+  font-family: var(--font-display);
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.025em;
   text-wrap: balance;
 }
 
 h1 {
-  font-size: clamp(2rem, 5.5vw, 3rem);
+  font-size: clamp(2.5rem, 6.5vw, 4.25rem);
 }
 h2 {
-  font-size: clamp(1.375rem, 3vw, 1.75rem);
+  font-size: clamp(1.75rem, 3.6vw, 2.5rem);
 }
 h3 {
-  font-size: 1.125rem;
+  font-size: 1.1875rem;
+  letter-spacing: -0.015em;
 }
 
 p {
@@ -170,7 +209,7 @@ code {
   font-size: 0.875em;
   background: var(--bg-subtle);
   border: 1px solid var(--border);
-  border-radius: 5px;
+  border-radius: 6px;
   padding: 0.1em 0.35em;
 }
 
@@ -186,11 +225,16 @@ hr {
   border-radius: 3px;
 }
 
+::selection {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
 /* ── Layout primitives ─────────────────────────────────────────── */
 
 .wrap {
   width: 100%;
-  max-width: 62rem;
+  max-width: 68rem;
   margin-inline: auto;
   padding-inline: var(--gutter);
 }
@@ -208,23 +252,233 @@ hr {
   margin-top: 1.15rem;
 }
 
+.muted {
+  color: var(--text-muted);
+}
+
+.lede {
+  font-size: clamp(1.0625rem, 1.6vw, 1.1875rem);
+  color: var(--text-muted);
+  max-width: var(--measure);
+}
+
+/* ── Typographic accents ───────────────────────────────────────── */
+
 .eyebrow {
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  letter-spacing: 0.11em;
+  font-weight: 500;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--text-faint);
   margin: 0;
 }
 
-.lede {
-  font-size: 1.1875rem;
-  color: var(--text-muted);
-  max-width: var(--measure);
+/* Eyebrow with a short accent rule in front of it — the marker that opens
+   every major section on the site. */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0;
 }
 
-.muted {
+.section-label::before {
+  content: '';
+  width: 1.75rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--gradient);
+  flex: none;
+}
+
+.gradient-text {
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  /* Descenders get clipped without a little breathing room on the line box. */
+  padding-bottom: 0.06em;
+}
+
+/* ── Buttons ───────────────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.7rem 1.35rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text);
+  text-decoration: none;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.4;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.btn:hover {
+  color: var(--text);
+  background: var(--bg-subtle);
+  border-color: var(--text-faint);
+  transform: translateY(-1px);
+}
+
+.btn--primary {
+  background: var(--gradient);
+  border-color: transparent;
+  color: var(--on-accent);
+  box-shadow: 0 6px 20px -8px var(--accent-ring);
+}
+
+.btn--primary:hover {
+  color: var(--on-accent);
+  background: var(--gradient);
+  border-color: transparent;
+  box-shadow: 0 12px 28px -10px var(--accent-ring);
+}
+
+/* Arrow nudge, shared by buttons and inline "more" links. */
+.btn .arrow,
+.arrow-link .arrow {
+  display: inline-block;
+  transition: transform 0.18s ease;
+}
+
+.btn:hover .arrow,
+.arrow-link:hover .arrow {
+  transform: translateX(3px);
+}
+
+.arrow-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.arrow-link:hover {
+  text-decoration: underline;
+}
+
+/* ── Surfaces ──────────────────────────────────────────────────── */
+
+.surface {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Small status/meta capsule, e.g. "Interning at Basic-Fit". */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem 0.35rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--bg-raised);
+  font-size: 0.8125rem;
   color: var(--text-muted);
+  box-shadow: var(--shadow-sm);
+}
+
+.pill .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+  flex: none;
+  box-shadow: 0 0 0 0 rgb(34 197 94 / 0.5);
+  animation: pulse 2.4s ease-out infinite;
+}
+
+@keyframes pulse {
+  70% {
+    box-shadow: 0 0 0 7px rgb(34 197 94 / 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgb(34 197 94 / 0);
+  }
+}
+
+/* Monospace tag, used for technologies throughout. */
+.tag {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 0.2rem 0.6rem;
+  white-space: nowrap;
+}
+
+/* ── Decorative background ─────────────────────────────────────── */
+
+/* Dotted grid, drawn with a gradient so it costs no request and inherits the
+   theme. Purely decorative — always aria-hidden at the markup level. */
+.dot-grid {
+  background-image: radial-gradient(var(--dot) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Entrance animation ────────────────────────────────────────── */
+
+/* fill-mode: both matters — under prefers-reduced-motion the duration is
+   forced to ~0 and the element lands on its final frame instead of vanishing. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rise {
+  animation: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.rise-1 {
+  animation-delay: 0.05s;
+}
+.rise-2 {
+  animation-delay: 0.13s;
+}
+.rise-3 {
+  animation-delay: 0.21s;
+}
+.rise-4 {
+  animation-delay: 0.29s;
 }
 
 .skip-link {
@@ -232,7 +486,7 @@ hr {
   left: -9999px;
   top: 0;
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   padding: 0.6rem 1rem;
   z-index: 100;
   border-radius: 0 0 var(--radius) 0;

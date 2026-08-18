@@ -5,26 +5,30 @@ interface Props {
   project: CollectionEntry<'projects'>;
   /** Featured cards get the larger treatment on /projects and the homepage. */
   featured?: boolean;
+  /** Rendered as the card's index badge, e.g. "01". */
+  index?: number;
 }
 
-const { project, featured = false } = Astro.props;
+const { project, featured = false, index } = Astro.props;
 const { title, summary, status, technologies } = project.data;
 
 // Cards show a trimmed stack; the detail page lists everything.
 const shown = technologies.slice(0, featured ? 6 : 4);
 const rest = technologies.length - shown.length;
+
+const badge =
+  typeof index === 'number' ? String(index).padStart(2, '0') : undefined;
 ---
 
 <article class:list={['card', { featured }]}>
-  <div class="head">
-    <h3>
-      <a href={`/projects/${project.id}`}>
-        {title}
-        <span class="arrow" aria-hidden="true">→</span>
-      </a>
-    </h3>
-    <p class="status">{status}</p>
+  <div class="top">
+    {badge && <span class="badge" aria-hidden="true">{badge}</span>}
+    <span class="status">{status}</span>
   </div>
+
+  <h3>
+    <a href={`/projects/${project.id}`}>{title}</a>
+  </h3>
 
   <p class="summary">{summary}</p>
 
@@ -32,60 +36,137 @@ const rest = technologies.length - shown.length;
     shown.length > 0 && (
       <ul class="tech" aria-label="Technologies">
         {shown.map((t) => (
-          <li>{t}</li>
+          <li class="tag">{t}</li>
         ))}
-        {rest > 0 && <li class="more">+{rest}</li>}
+        {rest > 0 && <li class="tag more">+{rest}</li>}
       </ul>
     )
   }
+
+  <span class="go" aria-hidden="true">
+    <svg viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true">
+      <path
+        d="M3 8h10M9 4l4 4-4 4"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"
+        stroke-linejoin="round"></path>
+    </svg>
+  </span>
 </article>
 
 <style>
   .card {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    padding: 1.5rem;
+    padding: 1.6rem;
     border: 1px solid var(--border);
-    border-radius: var(--radius);
+    border-radius: var(--radius-lg);
     background: var(--bg-raised);
+    box-shadow: var(--shadow-sm);
+    isolation: isolate;
     transition:
-      border-color 0.15s ease,
-      transform 0.15s ease;
+      border-color 0.2s ease,
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  /* Gradient wash that fades in on hover. A pseudo-element rather than a
+     background swap so the card's own background stays opaque behind the
+     text at every point in the transition. */
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: radial-gradient(
+      120% 90% at 100% 0%,
+      var(--accent-subtle),
+      transparent 60%
+    );
+    opacity: 0;
+    transition: opacity 0.25s ease;
   }
 
   .card:hover {
+    transform: translateY(-3px);
     border-color: var(--border-strong);
+    box-shadow: var(--shadow-md);
   }
 
-  .card:hover .arrow {
-    transform: translateX(3px);
+  .card:hover::before {
+    opacity: 1;
+  }
+
+  /* Focus follows hover: the whole card is one link target, so the visible
+     affordance has to react to keyboard focus too. */
+  .card:focus-within {
+    border-color: var(--accent);
   }
 
   .featured {
-    padding: 2rem;
-    background: linear-gradient(
-      to bottom right,
-      var(--accent-subtle),
-      var(--bg-raised) 55%
-    );
+    padding: clamp(1.75rem, 4vw, 2.5rem);
   }
 
-  .head {
+  .featured::before {
+    opacity: 0.75;
+  }
+
+  /* Badge and status share the left; the padding reserves the top-right
+     corner for the .go circle so the two never overlap. */
+  .top {
     display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 0.15rem;
+    padding-right: 2.5rem;
+    min-height: 1.2rem;
+  }
+
+  .badge {
+    flex: none;
+  }
+
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+  }
+
+  /* Statuses run long ("Actively being designed and prototyped"). Allowed to
+     wrap they push each card's title to a different height, so the row of
+     cards stops lining up — one line, clipped, with the full string on the
+     detail page. */
+  .status {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* The featured card has the width to show it in full. */
+  .featured .status {
+    white-space: normal;
+    overflow: visible;
   }
 
   h3 {
     margin: 0;
-    font-size: 1.1875rem;
+    font-size: 1.25rem;
   }
 
   .featured h3 {
-    font-size: 1.5rem;
+    font-size: clamp(1.5rem, 3vw, 2rem);
   }
 
   h3 a {
@@ -101,37 +182,8 @@ const rest = technologies.length - shown.length;
     inset: 0;
   }
 
-  .card {
-    position: relative;
-  }
-
   h3 a:hover {
     color: var(--accent);
-  }
-
-  .arrow {
-    display: inline-block;
-    margin-left: 0.3em;
-    transition: transform 0.15s ease;
-    color: var(--accent);
-  }
-
-  .status {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text-faint);
-    margin: 0;
-    text-align: right;
-  }
-
-  /* Once the header wraps, the status sits under the title — right-aligning a
-     wrapped line there just looks ragged. */
-  @media (max-width: 40rem) {
-    .status {
-      text-align: left;
-    }
   }
 
   .summary {
@@ -142,6 +194,7 @@ const rest = technologies.length - shown.length;
 
   .featured .summary {
     font-size: 1.0625rem;
+    max-width: 52ch;
   }
 
   .tech {
@@ -149,21 +202,63 @@ const rest = technologies.length - shown.length;
     flex-wrap: wrap;
     gap: 0.4rem;
     list-style: none;
-    margin: 0.25rem 0 0;
-    padding: 0;
-  }
-
-  .tech li {
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    color: var(--text-muted);
-    background: var(--bg-subtle);
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: 0.15rem 0.55rem;
+    /* Pin the stack to the bottom so cards of different text lengths line up
+       along their tag row in a grid. */
+    margin: auto 0 0;
+    padding: 1rem 0 0;
   }
 
   .tech .more {
     color: var(--text-faint);
+  }
+
+  .go {
+    position: absolute;
+    top: 1.6rem;
+    right: 1.6rem;
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text-faint);
+    opacity: 0;
+    transform: translate(-4px, 4px);
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease,
+      color 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .card:hover .go,
+  .card:focus-within .go {
+    opacity: 1;
+    transform: none;
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .featured .go {
+    top: clamp(1.75rem, 4vw, 2.5rem);
+    right: clamp(1.75rem, 4vw, 2.5rem);
+  }
+
+  /* No hover state on touch, so the affordance has to be permanently visible. */
+  @media (hover: none) {
+    .go {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* The status string is long ("Early-stage architecture and planning") and
+     is repeated on the detail page, so it is the first thing to go. */
+  @media (max-width: 26rem) {
+    .status {
+      display: none;
+    }
   }
 </style>

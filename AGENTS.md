@@ -31,6 +31,26 @@ recalling it:
   never disagree.
 - **Styling is plain CSS** with custom properties in `src/styles/global.css`
   plus scoped `<style>` blocks in components. No CSS framework. Keep it that
-  way unless there is a strong reason not to.
+  way unless there is a strong reason not to. Reach for the shared classes
+  (`.btn`, `.surface`, `.pill`, `.tag`, `.section-label`, `.gradient-text`,
+  `.arrow-link`) before writing a new one — they are what keeps the pages
+  looking like one site.
+- **Every colour comes from a token**, and every token is defined three times:
+  bare `:root`, the `prefers-color-scheme: dark` block, and `[data-theme='dark']`.
+  A colour defined in only one of those looks correct until someone flips a
+  theme. Never hard-code a hex outside `global.css`.
+- **Fonts are self-hosted** through Astro's font pipeline (`fonts` in
+  `astro.config.mjs`, `<Font>` tags in `Layout.astro`). This is a hard
+  constraint, not taste: `public/.htaccess` sets `font-src 'self' data:`, so a
+  `<link>` to Google Fonts would be blocked in the browser while working fine
+  in dev. The build emits them under `/_astro/fonts/`, which the existing
+  immutable cache rule already covers.
+- **Do not declare `--font-display`, `--font-sans`, or `--font-mono` in CSS.**
+  Astro's `<Font>` output defines them on `:root`; redeclaring them in
+  `global.css` races the cascade and wins or loses depending on stylesheet
+  order.
+- **Images that need optimising live in `src/images/`**, not `public/`, and are
+  rendered with `<Image>` from `astro:assets`. `public/` is for files that must
+  keep a fixed URL (favicons, `og.png`, `.htaccess`).
 - **Nav is capped at five items.** Adding a sixth is a product decision, not a
   code change.

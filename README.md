@@ -41,13 +41,38 @@ src/
   content/projects/    One markdown file per project
   data/now.ts          The /now page content
   data/uses.ts         The /uses page content
+  images/              Source images, optimised at build by <Image>
   lib/url.ts           Path normalisation (see note below)
-  components/          SEO, Nav, Footer, ProjectCard
+  styles/global.css    Design tokens + shared classes — start here for styling
+  components/          SEO, Nav, Footer, PageHeader, ProjectCard, SocialLinks
   layouts/Layout.astro The only page shell
   pages/               Routes
 public/
   .htaccess            Clean URLs + security headers for Apache
+  og.png, favicon.*    Fixed-URL assets, served as-is
 ```
+
+### Styling
+
+`src/styles/global.css` holds every colour, size, and shared class. Two rules
+keep it coherent:
+
+1. **No hex codes outside that file.** Colours are tokens, and each one is
+   defined for light, `prefers-color-scheme: dark`, and `[data-theme='dark']`.
+2. **Compose the shared classes** — `.btn`, `.surface`, `.pill`, `.tag`,
+   `.section-label`, `.gradient-text`, `.arrow-link` — before adding new CSS.
+   Page-specific layout goes in the page's own scoped `<style>` block.
+
+### Fonts
+
+Space Grotesk (display), Inter (body), and JetBrains Mono are downloaded at
+build time by Astro's font pipeline and emitted into `/_astro/fonts/`. They are
+**not** loaded from Google's CDN, and cannot be: the CSP in `public/.htaccess`
+sets `font-src 'self' data:`. Add or change a face in the `fonts` array in
+`astro.config.mjs`, then render it with `<Font>` in `Layout.astro`.
+
+Note that `--font-display`, `--font-sans`, and `--font-mono` are defined by
+Astro's generated `@font-face` CSS. Do not redeclare them in `global.css`.
 
 ### Adding a project
 

@@ -1,144 +1,521 @@
 ---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
-import { getCollection } from 'astro:content';
+import SocialLinks from '../components/SocialLinks.astro';
 import { SITE } from '../consts';
+import portrait from '../images/portrait.jpg';
 
-const projects = (await getCollection('projects', ({ data }) => !data.draft))
-  .sort((a, b) => a.data.order - b.data.order)
-  .slice(0, 3);
+const all = await getCollection('projects', ({ data }) => !data.draft);
+const featured = all.sort((a, b) => a.data.order - b.data.order).slice(0, 3);
+
+/**
+ * The reference portfolios this layout borrows from all put a stat band under
+ * the hero — "120+ projects, 500 clients". None of that is true here, and an
+ * inflated number on a student's site is the fastest way to lose a reviewer.
+ * So the band stays, and every figure in it is checkable: the project count is
+ * derived from the collection rather than typed in, so it cannot go stale.
+ */
+const facts = [
+  { value: '2019', label: 'Working in IT since' },
+  { value: 'Year 3', label: 'HBO Informatica, Avans' },
+  { value: String(all.length), label: 'Projects in the open' },
+  { value: '.NET · TS', label: 'Primary stack' },
+];
+
+// Mirrors the "trusted by" logo strip in the reference layouts — but with the
+// tools actually used, which /uses backs up in detail.
+const stack = [
+  'C#',
+  '.NET',
+  'TypeScript',
+  'React',
+  'PostgreSQL',
+  'Docker',
+  'Linux',
+  'Git',
+];
 ---
 
 <Layout title="Home" description={SITE.description} person>
-  <section class="hero wrap">
-    <h1>Software developer with infrastructure roots.</h1>
-    <p class="lede">
-      Early-career, systems-aware, and moving deliberately deeper into software
-      development.
-    </p>
-    <div class="actions">
-      <a class="btn primary" href="/projects">View the work</a>
-      <a class="btn" href="/about">Read my story</a>
+  <section class="hero">
+    <div class="backdrop dot-grid" aria-hidden="true"></div>
+    <div class="glow glow-a" aria-hidden="true"></div>
+    <div class="glow glow-b" aria-hidden="true"></div>
+
+    <div class="wrap hero-inner">
+      <div class="intro">
+        <p class="pill rise rise-1">
+          <span class="dot" aria-hidden="true"></span>
+          Interning with the IT/AI team at Basic-Fit
+        </p>
+
+        <p class="greeting rise rise-1">
+          Hallo <span class="wave" aria-hidden="true">👋</span> I'm Daniël van Ginneken
+        </p>
+
+        <h1 class="rise rise-2">
+          Software developer with <span class="gradient-text"
+            >infrastructure roots.</span
+          >
+        </h1>
+
+        <p class="lede rise rise-3">
+          Early-career, systems-aware, and moving deliberately deeper into
+          software development. I build backends in .NET and interfaces in
+          TypeScript, with the reliability habits that came from running live
+          systems first.
+        </p>
+
+        <div class="actions rise rise-4">
+          <a class="btn btn--primary" href="/projects">
+            View the work
+            <span class="arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="btn" href="/contact">Get in touch</a>
+          <SocialLinks class="hero-socials" />
+        </div>
+      </div>
+
+      <div class="portrait-col rise rise-3">
+        <div class="frame">
+          <Image
+            src={portrait}
+            alt="Daniël van Ginneken"
+            widths={[320, 480, 640, 900]}
+            sizes="(max-width: 56rem) 60vw, 24rem"
+            format="webp"
+            quality={78}
+            loading="eager"
+            fetchpriority="high"
+          />
+        </div>
+
+        {/* Decorative echo of the floating badges in the reference layouts.
+            Hidden below the two-column breakpoint, where they would land on
+            top of the portrait instead of beside it. */}
+        <span class="chip chip-a" aria-hidden="true">C# · .NET</span>
+        <span class="chip chip-b" aria-hidden="true">TypeScript</span>
+        <span class="chip chip-c" aria-hidden="true">Docker · Linux</span>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <ul class="stack-strip" aria-label="Technologies I work with">
+        {stack.map((s) => <li>{s}</li>)}
+      </ul>
     </div>
   </section>
 
+  <section class="wrap facts-wrap">
+    <dl class="facts">
+      {
+        facts.map((f) => (
+          <div class="fact">
+            <dt>{f.value}</dt>
+            <dd>{f.label}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
   <section class="wrap section">
-    <h2>A bit about me</h2>
-    <div class="prose muted">
-      <p>
-        Most developers start with code. I started with infrastructure: live
-        systems, support environments, and technical operations where
-        reliability is not optional.
-      </p>
-      <p>
-        That foundation still shapes how I build software. I think about
-        dependencies, failure modes, and maintainability as part of the build
-        process, not as an afterthought.
-      </p>
+    <p class="section-label">About</p>
+    <div class="about">
+      <h2>I started with infrastructure, not with code.</h2>
+      <div class="prose muted">
+        <p>
+          Live systems, support environments, and technical operations where
+          reliability is not optional. That is where my technical foundation
+          came from, and it still shapes how I build software.
+        </p>
+        <p>
+          Dependencies, failure modes, and maintainability are part of how I
+          build, not an afterthought once something is shipped.
+        </p>
+        <p><a class="arrow-link" href="/about">Read the full story <span class="arrow">→</span></a></p>
+      </div>
     </div>
   </section>
 
   <section class="wrap section">
     <div class="section-head">
-      <h2>Featured projects</h2>
-      <a href="/projects" class="see-all">Explore the projects →</a>
+      <div>
+        <p class="section-label">Selected work</p>
+        <h2>Featured projects</h2>
+      </div>
+      <a href="/projects" class="arrow-link"
+        >Explore all projects <span class="arrow">→</span></a
+      >
     </div>
-    <p class="lede">
+
+    <p class="lede intro">
       The portfolio is still growing, but the direction is already clear:
       infrastructure-aware engineering, backend security, and software that
       solves real operational problems.
     </p>
+
     <div class="grid">
-      {projects.map((p) => <ProjectCard project={p} />)}
+      {featured.map((p, i) => <ProjectCard project={p} index={i + 1} />)}
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="cta surface">
+      <div class="cta-glow" aria-hidden="true"></div>
+      <div class="cta-text">
+        <h2>Let's talk about the work.</h2>
+        <p class="muted">
+          Open to technical discussions, collaborations, and opportunities that
+          fit my current stage of development.
+        </p>
+      </div>
+      <a class="btn btn--primary" href="/contact">
+        Get in touch
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
     </div>
   </section>
 </Layout>
 
 <style>
+  /* ── Hero ──────────────────────────────────────────────────── */
+
   .hero {
-    padding-block: clamp(3.5rem, 10vw, 6rem) clamp(2rem, 6vw, 3rem);
+    position: relative;
+    isolation: isolate;
+    padding-block: clamp(2.5rem, 7vw, 4.5rem) clamp(2rem, 5vw, 3rem);
+    overflow: hidden;
   }
 
-  .hero h1 {
-    margin-bottom: 1rem;
-    max-width: 18ch;
+  /* Dot grid, faded out at the bottom so it ends rather than being cut off. */
+  .backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    mask-image: linear-gradient(to bottom, black 20%, transparent 92%);
+  }
+
+  .glow-a {
+    top: -12rem;
+    right: -10rem;
+    width: 40rem;
+    height: 30rem;
+    background: var(--glow-1);
+    z-index: -1;
+  }
+
+  .glow-b {
+    top: 12rem;
+    left: -14rem;
+    width: 32rem;
+    height: 26rem;
+    background: var(--glow-2);
+    z-index: -1;
+  }
+
+  .hero-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    align-items: center;
+    gap: clamp(2rem, 5vw, 4rem);
+  }
+
+  .intro > * + * {
+    margin-top: 1.15rem;
+  }
+
+  .greeting {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+
+  .wave {
+    display: inline-block;
+    transform-origin: 70% 70%;
+    animation: wave 3.2s ease-in-out infinite;
+  }
+
+  @keyframes wave {
+    0%,
+    60%,
+    100% {
+      transform: rotate(0deg);
+    }
+    65% {
+      transform: rotate(14deg);
+    }
+    72% {
+      transform: rotate(-8deg);
+    }
+    79% {
+      transform: rotate(10deg);
+    }
+    86% {
+      transform: rotate(-4deg);
+    }
+  }
+
+  h1 {
+    max-width: 15ch;
+  }
+
+  .hero .lede {
+    max-width: 46ch;
   }
 
   .actions {
     display: flex;
+    align-items: center;
     gap: 0.75rem;
     flex-wrap: wrap;
-    margin-top: 2rem;
+    margin-top: 2rem !important;
   }
 
-  .btn {
-    display: inline-block;
-    padding: 0.6rem 1.15rem;
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius);
-    color: var(--text);
-    text-decoration: none;
-    font-size: 0.9375rem;
-    font-weight: 500;
-    transition:
-      background 0.15s ease,
-      border-color 0.15s ease;
+  .hero-socials {
+    /* Push the icon row away from the buttons without a hard divider. */
+    margin-left: 0.5rem;
   }
 
-  .btn:hover {
+  /* ── Portrait ──────────────────────────────────────────────── */
+
+  .portrait-col {
+    position: relative;
+    justify-self: center;
+    width: min(100%, 24rem);
+  }
+
+  .frame {
+    position: relative;
+    border-radius: calc(var(--radius-lg) + 6px);
+    overflow: hidden;
+    border: 1px solid var(--border);
     background: var(--bg-subtle);
-    border-color: var(--text-faint);
+    box-shadow: var(--shadow-lg);
+    aspect-ratio: 4 / 5;
   }
 
-  .btn.primary {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #fff;
+  .frame :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* The source is a 2:3 portrait; anchoring to the top keeps the face in
+       frame when the 4:5 crop takes height off the bottom. */
+    object-position: 50% 12%;
   }
 
-  .btn.primary:hover {
-    background: var(--accent-hover);
-    border-color: var(--accent-hover);
+  .chip {
+    position: absolute;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text);
+    background: color-mix(in srgb, var(--bg-raised) 85%, transparent);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    padding: 0.35rem 0.75rem;
+    box-shadow: var(--shadow-md);
+    white-space: nowrap;
+    animation: float 6s ease-in-out infinite;
   }
+
+  .chip-a {
+    top: 12%;
+    left: -1.5rem;
+  }
+
+  .chip-b {
+    top: 46%;
+    right: -1.75rem;
+    animation-delay: -2s;
+  }
+
+  .chip-c {
+    bottom: 10%;
+    left: -2.25rem;
+    animation-delay: -4s;
+  }
+
+  @keyframes float {
+    50% {
+      transform: translateY(-7px);
+    }
+  }
+
+  /* ── Stack strip ───────────────────────────────────────────── */
+
+  .stack-strip {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem 1.75rem;
+    list-style: none;
+    margin: clamp(2.5rem, 6vw, 4rem) 0 0;
+    padding: 1.25rem 0 0;
+    border-top: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--text-faint);
+  }
+
+  /* ── Facts ─────────────────────────────────────────────────── */
+
+  .facts-wrap {
+    margin-top: clamp(2rem, 5vw, 3rem);
+  }
+
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+    gap: 1px;
+    margin: 0;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .fact {
+    background: var(--bg);
+    padding: 1.4rem 1.5rem;
+  }
+
+  .fact dt {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 1.875rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: var(--text);
+  }
+
+  .fact dd {
+    margin: 0.35rem 0 0;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+
+  /* ── Sections ──────────────────────────────────────────────── */
 
   .section {
-    padding-block: clamp(2rem, 5vw, 3rem);
+    padding-block: clamp(3rem, 7vw, 4.5rem) 0;
   }
 
   .section h2 {
-    margin-bottom: 1rem;
+    margin-top: 0.9rem;
+  }
+
+  .about {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+  }
+
+  .about h2 {
+    max-width: 14ch;
   }
 
   .section-head {
     display: flex;
-    align-items: baseline;
+    align-items: flex-end;
     justify-content: space-between;
-    gap: 1rem;
+    gap: 1.5rem;
     flex-wrap: wrap;
   }
 
   .section-head h2 {
-    margin-bottom: 0;
+    margin-top: 0.9rem;
   }
 
-  .section-head + .lede {
-    margin-top: 0.6rem;
-  }
-
-  .see-all {
-    font-size: 0.9rem;
-    text-decoration: none;
-    white-space: nowrap;
-  }
-
-  .see-all:hover {
-    text-decoration: underline;
+  .intro {
+    margin-top: 1.1rem;
   }
 
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
     gap: 1rem;
-    margin-top: 1.75rem;
+    margin-top: 2rem;
+  }
+
+  /* ── Closing CTA ───────────────────────────────────────────── */
+
+  .cta {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-top: clamp(3.5rem, 8vw, 5.5rem);
+    padding: clamp(2rem, 5vw, 3rem);
+  }
+
+  .cta-glow {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(
+      90% 120% at 100% 0%,
+      var(--accent-subtle),
+      transparent 65%
+    );
+  }
+
+  .cta-text {
+    max-width: 40ch;
+  }
+
+  .cta h2 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    margin-bottom: 0.6rem;
+  }
+
+  /* ── Responsive ────────────────────────────────────────────── */
+
+  /* One column below ~56rem. The portrait leads, because a face is a better
+     first impression on a phone than three lines of positioning copy. */
+  @media (max-width: 56rem) {
+    .hero-inner {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 2.5rem;
+    }
+
+    .portrait-col {
+      order: -1;
+      width: min(100%, 17rem);
+      justify-self: start;
+    }
+
+    .chip {
+      display: none;
+    }
+
+    .about {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .about h2 {
+      max-width: 20ch;
+    }
+  }
+
+  @media (max-width: 34rem) {
+    .actions {
+      gap: 0.6rem;
+    }
+
+    .hero-socials {
+      margin-left: 0;
+      /* Own line under the two buttons rather than a cramped third item. */
+      width: 100%;
+      margin-top: 0.4rem;
+    }
   }
 </style>

@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import PageHeader from '../../components/PageHeader.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import { getCollection } from 'astro:content';
 
@@ -27,34 +28,40 @@ const groups = [
     intro:
       'An idea not yet in active development, kept here to show the product thinking direction.',
   },
-].map((g) => ({ ...g, items: all.filter((p) => p.data.category === g.key) }))
+]
+  .map((g) => ({ ...g, items: all.filter((p) => p.data.category === g.key) }))
   .filter((g) => g.items.length > 0);
+
+// One continuous numbering across the groups, so the badges read as a single
+// ordered body of work rather than restarting in each section.
+const indexOf = new Map(all.map((p, i) => [p.id, i + 1]));
 ---
 
 <Layout
   title="Projects"
   description="Selected builds and technical explorations across .NET, networking, authentication, and platform architecture."
 >
-  <div class="wrap page">
-    <header class="head">
-      <p class="eyebrow">Projects</p>
-      <h1>Selected builds and technical explorations.</h1>
-      <p class="lede">
-        Most of these projects are currently in the architecture, research, or
-        early implementation phase. I use them as vehicles to explore software
-        engineering, product development, networking, security, and
-        business-oriented problem solving.
-      </p>
-    </header>
+  <PageHeader label="Projects">
+    <span slot="title">Selected builds and technical explorations.</span>
+    Most of these projects are currently in the architecture, research, or early
+    implementation phase. I use them as vehicles to explore software
+    engineering, product development, networking, security, and
+    business-oriented problem solving.
+  </PageHeader>
 
+  <div class="wrap">
     {
       groups.map((g) => (
         <section class="group">
-          <h2>{g.label}</h2>
+          <p class="section-label">{g.label}</p>
           <p class="muted intro">{g.intro}</p>
           <div class:list={['grid', { single: g.items.length === 1 }]}>
             {g.items.map((p) => (
-              <ProjectCard project={p} featured={g.key === 'featured'} />
+              <ProjectCard
+                project={p}
+                featured={g.key === 'featured'}
+                index={indexOf.get(p.id)}
+              />
             ))}
           </div>
         </section>
@@ -64,24 +71,17 @@ const groups = [
 </Layout>
 
 <style>
-  .page {
-    padding-block: clamp(2.5rem, 7vw, 4rem) 0;
-  }
-
-  .head h1 {
-    margin-block: 0.75rem 1rem;
-  }
-
   .group {
-    margin-top: clamp(2.5rem, 6vw, 3.5rem);
+    margin-top: clamp(2rem, 5vw, 3rem);
   }
 
-  .group h2 {
-    font-size: 1.25rem;
+  .group + .group {
+    padding-top: clamp(2rem, 5vw, 3rem);
+    border-top: 1px solid var(--border);
   }
 
   .intro {
-    margin-top: 0.4rem;
+    margin-top: 0.75rem;
     max-width: var(--measure);
     font-size: 0.9375rem;
   }
