@@ -3,6 +3,7 @@
  * The only page shell. Every route renders through here, which is what keeps
  * the <head> contract (canonical, OG, JSON-LD) impossible to forget.
  */
+import { Font } from 'astro:assets';
 import SEO from '../components/SEO.astro';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
@@ -26,6 +27,16 @@ const { title, description, ...seo } = Astro.props;
 <html lang={SITE.locale}>
   <head>
     <SEO title={title} description={description} {...seo} />
+
+    {/*
+      Self-hosted via Astro's font pipeline — see astro.config.mjs. Only the
+      display face is preloaded: it renders the <h1> above the fold, so a swap
+      there is the one the visitor actually sees. Body and mono load normally
+      and swap without a visible reflow of the first paint.
+    */}
+    <Font cssVariable="--font-display" preload />
+    <Font cssVariable="--font-sans" />
+    <Font cssVariable="--font-mono" />
   </head>
   <body>
     <a href="#main" class="skip-link">Skip to content</a>

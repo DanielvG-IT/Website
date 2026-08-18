@@ -1,0 +1,81 @@
+---
+/**
+ * The opening block of every page except the homepage, which owns its own hero.
+ *
+ * Extracted so the five inner pages cannot drift apart: one label style, one
+ * heading size, one amount of space underneath. The decorative glow lives here
+ * too, which is why pages no longer position anything themselves.
+ */
+interface Props {
+  /** Small monospace label above the heading. */
+  label: string;
+  /** Optional right-hand meta, e.g. "Last updated 17 August 2026". */
+  meta?: string;
+}
+
+const { label, meta } = Astro.props;
+---
+
+<header class="page-header">
+  <div class="glow" aria-hidden="true"></div>
+
+  <div class="wrap inner">
+    <div class="row">
+      <p class="section-label">{label}</p>
+      {meta && <p class="meta">{meta}</p>}
+    </div>
+
+    <h1><slot name="title" /></h1>
+
+    <div class="lede"><slot /></div>
+  </div>
+</header>
+
+<style>
+  .page-header {
+    position: relative;
+    padding-block: clamp(3rem, 8vw, 5rem) clamp(1.5rem, 4vw, 2.5rem);
+    overflow: hidden;
+  }
+
+  .glow {
+    top: -14rem;
+    left: -8rem;
+    width: 34rem;
+    height: 24rem;
+    background: var(--glow-1);
+  }
+
+  .inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .meta {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  h1 {
+    margin-block: 1.1rem 1.25rem;
+    max-width: 20ch;
+  }
+
+  /* .lede is a global class; this wrapper only carries the slot content. */
+  .lede {
+    font-size: clamp(1.0625rem, 1.6vw, 1.1875rem);
+    color: var(--text-muted);
+    max-width: var(--measure);
+  }
+</style>
