@@ -1,66 +1,98 @@
 // @ts-check
-import { defineConfig, fontProviders } from 'astro/config';
-import sitemap from '@astrojs/sitemap';
+import { defineConfig, fontProviders } from "astro/config";
+import sitemap from "@astrojs/sitemap";
+import robotsTxt from "astro-robots-txt";
 
-// https://astro.build/config
+// https://astro.build
 export default defineConfig({
-  // Canonical origin. Every absolute URL on the site (canonical tags, OpenGraph,
-  // sitemap, RSS) derives from this, so .nl / .dev 301s never leak into markup.
-  site: 'https://danielvanginneken.com',
-  output: 'static',
-  trailingSlash: 'never',
+  // 1. CANONICAL ORIGIN & ROUTING
+  // Every absolute URL (canonical tags, OpenGraph, sitemap) derives from here.
+  // This guarantees that traffic from .nl and .dev 301 redirects never leaks into markup.
+  site: "https://danielvanginneken.com",
+  output: "static",
+  trailingSlash: "never",
 
-  // English is the only shipped locale today. `prefixDefaultLocale: false` keeps
-  // it at the root (/about, not /en/about), so adding 'nl' later is purely
-  // additive — no existing .com URL changes.
+  // 2. INTERNATIONALIZATION (i18n)
+  // English is the root locale today (/about). Adding 'nl' later will be purely additive
+  // (/nl/about) without modifying or breaking any existing canonical .com URLs.
   i18n: {
-    locales: ['en'],
-    defaultLocale: 'en',
+    locales: ["en", "nl"],
+    defaultLocale: "en",
     routing: {
       prefixDefaultLocale: false,
     },
   },
 
-  integrations: [sitemap()],
+  // 3. AUTOMATED INTEGRATIONS
+  integrations: [
+    // Generates sitemap-index.xml and sitemap-0.xml at build time
+    sitemap({
+      // Dynamically injects x-default and alternate hreflang tags for future-proofing i18n
+      i18n: {
+        defaultLocale: "en",
+        locales: {
+          en: "en-US",
+          nl: "nl-NL",
+        },
+      },
+      // Optional: Filter out administrative or unneeded system pages
+      filter: (page) =>
+        !page.includes("/404") && !page.includes("/secret-page"),
+    }),
 
-  // Fonts are downloaded at build time and emitted into _astro/fonts/, so they
-  // are served from our own origin. This is not a preference — the CSP in
-  // public/.htaccess sets `font-src 'self' data:`, so a <link> to Google Fonts
-  // would be blocked in the browser. Weights are listed explicitly: every extra
-  // weight is another file on the critical path.
+    // Generates a perfect robots.txt file mapping back to your canonical sitemap
+    robotsTxt({
+      sitemap: "https://danielvanginneken.com",
+      host: "danielvanginneken.com",
+      policy: [
+        {
+          userAgent: "*",
+          allow: "/",
+          disallow: ["/404", "/api/"],
+        },
+      ],
+    }),
+  ],
+
+  // 4. PERFORMANCE & LOCAL FONTS (CSP Compliant)
+  // Fonts are downloaded at build time and emitted into _astro/fonts/.
+  // This satisfies your public/.htaccess CSP rule: `font-src 'self' data:`.
   fonts: [
     {
       provider: fontProviders.google(),
-      name: 'Space Grotesk',
-      cssVariable: '--font-display',
-      weights: ['500', '700'],
-      styles: ['normal'],
-      subsets: ['latin'],
-      fallbacks: ['ui-sans-serif', 'system-ui', 'sans-serif'],
+      name: "Space Grotesk",
+      cssVariable: "--font-display",
+      weights: ["500", "700"],
+      styles: ["normal"],
+      subsets: ["latin"],
+      fallbacks: ["ui-sans-serif", "system-ui", "sans-serif"],
     },
     {
       provider: fontProviders.google(),
-      name: 'Inter',
-      cssVariable: '--font-sans',
-      weights: ['400', '500', '600'],
-      styles: ['normal'],
-      subsets: ['latin'],
-      fallbacks: ['ui-sans-serif', 'system-ui', 'sans-serif'],
+      name: "Inter",
+      cssVariable: "--font-sans",
+      weights: ["400", "500", "600"],
+      styles: ["normal"],
+      subsets: ["latin"],
+      fallbacks: ["ui-sans-serif", "system-ui", "sans-serif"],
     },
     {
       provider: fontProviders.google(),
-      name: 'JetBrains Mono',
-      cssVariable: '--font-mono',
-      weights: ['400', '500'],
-      styles: ['normal'],
-      subsets: ['latin'],
-      fallbacks: ['ui-monospace', 'SFMono-Regular', 'monospace'],
+      name: "JetBrains Mono",
+      cssVariable: "--font-mono",
+      weights: ["400", "500"],
+      styles: ["normal"],
+      subsets: ["latin"],
+      fallbacks: ["ui-monospace", "SFMono-Regular", "monospace"],
     },
   ],
 
+  // 5. SERVER-SPECIFIC BUILD FORMAT
   build: {
-    // Emit /about.html rather than /about/index.html so Apache serves clean
-    // URLs on Plesk without directory-index rewrites.
-    format: 'file',
+    // Emits /about.html instead of /about/index.html.
+    // This allows Apache to serve clean URLs on Plesk without directory-index rewrites.
+    format: "file",
+    // Optimizes build assets for fast caching and delivery
+    assets: "_assets",
   },
 });
