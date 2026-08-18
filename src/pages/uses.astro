@@ -6,12 +6,13 @@ import { USES } from '../data/uses';
 
 <Layout
   title="Uses"
-  description="The hardware, editors, languages, and services I actually work with day to day."
+  description="The hardware, software, platforms, and technologies I use to build, develop, and work with systems."
 >
   <PageHeader label="Uses">
-    <span slot="title">What I work with.</span>
-    The tools I actually reach for day to day. Not an aspirational list — every
-    entry here is something I could be asked about and would have an answer for.
+    <span slot="title">What I actually use.</span>
+    The hardware, software, platforms, and technologies that are part of my
+    day-to-day work, development, and projects. This is about what I actually
+    use rather than a list of everything I have ever touched.
   </PageHeader>
 
   <div class="wrap">
@@ -20,6 +21,7 @@ import { USES } from '../data/uses';
         USES.map((group) => (
           <section class="group surface">
             <h2>{group.title}</h2>
+
             <dl>
               {group.items.map((item) => (
                 <div class="row">
@@ -78,5 +80,6 @@ import { USES } from '../data/uses';
     margin: 0.15rem 0 0;
     color: var(--text-muted);
     font-size: 0.875rem;
+    line-height: 1.55;
   }
 </style>

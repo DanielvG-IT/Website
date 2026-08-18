@@ -7,33 +7,48 @@
  */
 
 export const NOW = {
-  /** ISO date. Rendered as "Last updated ..." at the top of the page. */
-  updated: '2026-08-17',
-
+  updated: "2026-08-18",
   intro:
-    'Third-year software engineering student at Avans Hogeschool, currently interning with the IT/AI team at Basic-Fit.',
-
+    "HBO Informatica student at Avans Hogeschool, moving from an IT systems background deeper into software development and preparing for my upcoming internship with the IT/AI team at Basic-Fit.",
   sections: [
     {
-      title: 'Working on',
+      title: "Software development",
       items: [
-        'Interning with the IT/AI team at Basic-Fit, working alongside engineers on real systems rather than coursework projects.',
-        'Learning how a large organisation actually ships and operates software — the review, release, and on-call side that a classroom cannot simulate.',
+        "Deepening my knowledge of .NET and C# for backend and API development.",
+        "Getting more comfortable with TypeScript, React, and building complete applications end to end.",
+        "Learning to think more about architecture, maintainability, deployment, and reliability instead of only making features work.",
       ],
     },
     {
-      title: 'Learning',
+      title: "Internship",
       items: [
-        '.NET and C# for backend and API work, with more attention to architecture than syntax at this point.',
-        'TypeScript and frontend structure, mostly through building things end to end.',
-        'How AI tooling fits into an engineering workflow without becoming a substitute for understanding the code.',
+        "Preparing for my upcoming internship with the IT/AI team at Basic-Fit.",
+        "Getting ready to work in a professional software environment where code reviews, releases, collaboration, and real users matter.",
+        "Looking forward to learning how a larger organisation approaches software development and AI in practice.",
       ],
     },
     {
-      title: 'Building on the side',
+      title: "Building on the side",
       items: [
-        'OpenCaptive — an open-source captive portal platform, currently in early-stage architecture.',
-        'This site, rebuilt in Astro as a static bundle.',
+        "OpenCaptive — an open-source captive portal platform, currently being shaped into a proper multi-tenant product.",
+        "DentechSync — an internal platform for connecting systems and automating operational workflows.",
+        "This portfolio — built in Astro as a fast, static site and used as a place to document the work.",
+      ],
+    },
+    {
+      title: "Learning",
+      items: [
+        "How to design software that is easier to deploy, monitor, maintain, and extend.",
+        "Deployment, CI/CD, Docker, cloud platforms, databases, and the infrastructure around applications.",
+        "Using AI tools as part of development while keeping ownership of the architecture and understanding of the code.",
+      ],
+    },
+    {
+      title: "Outside of code",
+      items: [
+        "Staying consistent with training and working toward my fitness goals.",
+        "Learning more about motorcycles and working toward my A2 license.",
+        "Building a life where software development, technical projects, fitness, and personal growth all have a place.",
       ],
     },
   ],

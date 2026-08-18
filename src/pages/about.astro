@@ -7,96 +7,89 @@ import portrait from '../images/portrait.jpg';
 
 const sections = [
   {
-    title: 'Where the technical foundation came from',
+    title: 'I started with IT, not software',
     paragraphs: [
-      'My technical foundation started in support and infrastructure contexts where systems are live and consequences are immediate.',
-      'That environment taught me to stay calm, diagnose carefully, and understand how one change affects everything connected to it.',
+      'My background is in IT systems, infrastructure, and support. Before I was focused on software development, I was already working with the systems that software depends on: networks, servers, endpoints, cloud services, monitoring, and production environments.',
+      'That experience shaped the way I think about technology. I naturally look beyond whether something works and ask what happens when it fails, how it is maintained, and what the people using it actually need.',
     ],
   },
   {
-    title: 'What that background gave me',
+    title: 'Working with real systems changed how I think',
     paragraphs: [
-      'It gave me systems thinking and operational discipline early. I learned to ask what fails, why it fails, and what recovery requires.',
-      'Those habits now carry into software work as attention to structure, reliability, and long-term maintainability.',
+      'Working in real IT environments taught me that technical decisions always have consequences. A configuration change can affect an entire customer environment, and a small mistake can become someone else’s problem.',
+      'That gave me a practical mindset that I now carry into software development: understand the system, make deliberate changes, and build things that can actually be maintained.',
     ],
   },
   {
-    title: 'Why software is the direction now',
+    title: 'Software became the natural next step',
     paragraphs: [
-      'The move toward software was not a hard pivot. It was a natural next step from understanding systems to building them more directly.',
-      'I am now focused on .NET, TypeScript, React, and API-driven development while keeping that infrastructure-aware lens.',
+      'The more I worked with infrastructure, the more interested I became in what was happening behind the systems I was supporting. I wanted to understand how the software itself was designed, not just how to deploy or troubleshoot it.',
+      'That eventually led me into software development and HBO Informatica at Avans Hogeschool. Today I spend most of my time working with .NET, C#, TypeScript, React, APIs, databases, and the infrastructure around them.',
     ],
   },
   {
-    title: 'What an internship changed',
+    title: 'I learn by building',
     paragraphs: [
-      'Interning with the IT/AI team at Basic-Fit moved my work from coursework projects to systems other people depend on.',
-      'The difference is mostly in the parts that are not writing code: how changes get reviewed, how software is released, and how a team decides what is worth building. That context is difficult to simulate in a classroom.',
+      'A large part of my development happens outside the classroom. I build projects to understand technologies properly, test ideas, and solve problems that interest me.',
+      'Projects such as OpenCaptive and DentechSync have taught me as much about architecture, deployment, integrations, authentication, observability, and product thinking as they have about writing code.',
     ],
   },
   {
-    title: 'What kind of builder I want to become',
+    title: 'What I am working toward',
     paragraphs: [
-      'I want to build software that is technically clear, operationally responsible, and honest about scope.',
-      'For me, a serious body of work means consistent quality, well-explained decisions, and steady progression over hype.',
+      'I am still early in my software career, and I do not want to pretend otherwise. My goal is not to know everything already, but to keep becoming better at turning ideas into reliable software.',
+      'I want to become the kind of developer who understands both the code and the environment around it: someone who can build, deploy, troubleshoot, improve, and take responsibility for the systems they create.',
     ],
   },
 ];
 
-/**
- * Compact progression, folded in from the old standalone Journey page. The
- * narrative above tells this story properly; this exists because reviewers
- * scan for dates, and a second page repeating the same arc was not earning
- * its place in the nav.
- */
 const timeline = [
   {
     period: '2019—2022',
     title: 'IT systems foundation',
     detail:
-      'Support and infrastructure environments: Linux, networking, and troubleshooting on live systems.',
+      'Started building a practical foundation in IT, networking, systems administration, troubleshooting, and infrastructure.',
   },
   {
     period: '2022—2023',
-    title: 'From operating systems to building them',
+    title: 'MBO Level 4 — IT',
     detail:
-      'Infrastructure work made software questions visible. The interest shifted from fixing systems to designing them.',
+      'Completed MBO Level 4 in IT and gained hands-on experience working with real systems and environments.',
   },
   {
     period: '2023—2024',
-    title: 'MBO Level 4 → HBO Informatica',
+    title: 'From IT operations to software development',
     detail:
-      'Completed MBO Level 4 in IT, then started HBO Informatica at Avans Hogeschool.',
+      'The focus gradually shifted from operating and supporting systems toward understanding and building the software behind them.',
   },
   {
-    period: '2024—2025',
-    title: 'Projects and technical explorations',
+    period: '2024—2026',
+    title: 'HBO Informatica at Avans',
     detail:
-      'Learning turned into visible output: OpenCaptive, Aegis.Auth, and StrengthSuite.',
+      'Studying software development while building personal projects and continuing to work in IT.',
   },
   {
-    period: 'Now',
-    title: 'Third year, interning at Basic-Fit',
+    period: '2026',
+    title: 'Software development in practice',
     detail:
-      'Interning with the IT/AI team while continuing to deepen systems awareness.',
+      'Preparing for an internship with the IT/AI team at Basic-Fit while continuing to build projects and deepen my software engineering skills.',
   },
 ];
 ---
 
 <Layout
   title="About"
-  description="Infrastructure first, software by intent — how a background in networking and systems operations shapes the way I build software."
+  description="An IT systems background, a growing focus on software development, and a habit of learning by building."
   person
 >
   <PageHeader label="About">
-    <span slot="title">Infrastructure first. Software by intent.</span>
-    Before I wrote software, I worked with the systems software depends on:
-    networking, Linux, infrastructure support, and practical troubleshooting in
-    real environments.
+    <span slot="title">From systems to software.</span>
+    I started in IT infrastructure and support. Today, I am building toward a
+    career in software development while keeping the systems perspective that
+    got me here.
   </PageHeader>
 
   <div class="wrap">
-    <!-- Portrait plus the one-line facts a reviewer scans for before reading. -->
     <section class="profile surface">
       <div class="portrait">
         <Image
@@ -112,14 +105,16 @@ const timeline = [
       <div class="profile-body">
         <p class="pill">
           <span class="dot" aria-hidden="true"></span>
-          Interning with the IT/AI team at Basic-Fit
+          Software development student · IT background
         </p>
+
         <p class="muted">
-          Third year of HBO Informatica at Avans Hogeschool, after MBO Level 4
-          in IT. Based in the Netherlands. Focused on .NET and TypeScript, and
-          on building work that is honest about where I am now and deliberate
-          about where I am going.
+          HBO Informatica student at Avans Hogeschool with an MBO Level 4
+          background in IT. Based in the Netherlands. I work with .NET, C#,
+          TypeScript, React, APIs, databases, and infrastructure, and I learn
+          a lot of that by building things myself.
         </p>
+
         <SocialLinks email />
       </div>
     </section>
@@ -241,8 +236,6 @@ const timeline = [
     max-width: var(--measure);
   }
 
-  /* The rail is drawn per-item so the last entry's line stops at its own
-     marker instead of trailing into empty space. */
   .timeline li:not(:last-child)::before {
     content: '';
     position: absolute;

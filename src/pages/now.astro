@@ -13,7 +13,7 @@ const formatted = updated.toLocaleDateString('en-GB', {
 
 <Layout
   title="Now"
-  description="What I am working on, learning, and building at the moment."
+  description="What I am learning, building, and focusing on right now."
 >
   <PageHeader label="Now" meta={`Updated ${formatted}`}>
     <span slot="title">What I am focused on right now.</span>
@@ -29,8 +29,10 @@ const formatted = updated.toLocaleDateString('en-GB', {
               <span class="num" aria-hidden="true">
                 {String(i + 1).padStart(2, '0')}
               </span>
+
               <h2>{s.title}</h2>
             </div>
+
             <ul>
               {s.items.map((item) => (
                 <li>{item}</li>
@@ -45,8 +47,12 @@ const formatted = updated.toLocaleDateString('en-GB', {
       This is a <a
         href="https://nownownow.com/about"
         target="_blank"
-        rel="noopener noreferrer">now page</a
-      >. It describes a point in time, not a permanent position.
+        rel="noopener noreferrer"
+      >
+        now page
+      </a
+      >. It captures what matters to me at this point in time rather than
+      trying to describe my entire life or career.
     </p>
   </div>
 </Layout>
@@ -99,10 +105,9 @@ const formatted = updated.toLocaleDateString('en-GB', {
     padding-left: 1.15rem;
     color: var(--text-muted);
     font-size: 0.9375rem;
+    line-height: 1.55;
   }
 
-  /* A small accent square rather than a bullet — reads as a checklist marker
-     without borrowing a checkmark's "done" meaning. */
   .block li::before {
     content: '';
     position: absolute;
@@ -119,5 +124,11 @@ const formatted = updated.toLocaleDateString('en-GB', {
     padding-top: 1.5rem;
     border-top: 1px solid var(--border);
     font-size: 0.875rem;
+  }
+
+  .note a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
   }
 </style>

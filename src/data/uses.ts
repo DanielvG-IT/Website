@@ -17,60 +17,101 @@ interface Group {
 
 export const USES: Group[] = [
   {
-    title: 'Editors',
+    title: "Editors & AI",
     items: [
       {
-        name: 'VS Code',
-        note: 'Primary editor for TypeScript, web work, and everything in this repo.',
+        name: "VS Code",
+        note: "Primary editor for TypeScript, web development, and general project work.",
       },
       {
-        name: 'JetBrains Rider',
-        note: 'For .NET solutions, where the refactoring and debugger earn their keep.',
+        name: "JetBrains Rider",
+        note: "Preferred environment for .NET and C# projects, especially larger solutions.",
       },
       {
-        name: 'Claude Code',
-        note: 'In the terminal, for refactors and working through unfamiliar codebases.',
+        name: "Claude Code",
+        note: "Used in the terminal for exploration, refactoring, debugging, and working through unfamiliar code.",
       },
     ],
   },
   {
-    title: 'Languages & runtimes',
-    items: [
-      { name: '.NET / C#', note: 'Backend, APIs, and reusable libraries.' },
-      { name: 'TypeScript', note: 'Frontend and tooling.' },
-    ],
-  },
-  {
-    title: 'Development',
+    title: "Languages & frameworks",
     items: [
       {
-        name: 'Docker',
-        note: 'Local databases and services, so environments stay reproducible.',
+        name: "C# / .NET",
+        note: "Backend services, APIs, application logic, and reusable libraries.",
       },
       {
-        name: 'Postman',
-        note: 'Exercising APIs while building them.',
+        name: "TypeScript",
+        note: "Frontend applications, tooling, and full-stack development.",
       },
-      { name: 'Git', note: 'With GitHub for hosting, reviews, and CI.' },
-    ],
-  },
-  {
-    title: 'Machine',
-    items: [
-      { name: 'macOS', note: 'Daily driver.' },
-      { name: 'Terminal · zsh', note: 'Where most of the work actually happens.' },
       {
-        name: 'Keychron K13 Max',
-        note: 'Low-profile Gateron Reds, hot-swappable, wireless.',
+        name: "React",
+        note: "Interactive web interfaces and application frontends.",
+      },
+      {
+        name: "Astro",
+        note: "This portfolio and other content-focused websites.",
       },
     ],
   },
   {
-    title: 'Infrastructure',
+    title: "Data & development",
     items: [
-      { name: 'GitHub Actions', note: 'Builds and deploys this site on every push to main.' },
-      { name: 'Plesk', note: 'Origin host for danielvanginneken.com.' },
-      { name: 'Cloudflare', note: 'DNS, and the .nl / .dev redirects.' },
+      {
+        name: "PostgreSQL",
+        note: "Primary relational database for projects and application backends.",
+      },
+      {
+        name: "Docker",
+        note: "Local services, databases, and reproducible development environments.",
+      },
+      {
+        name: "Postman",
+        note: "Testing and exploring APIs during development.",
+      },
+      {
+        name: "Git + GitHub",
+        note: "Version control, collaboration, pull requests, and project hosting.",
+      },
+    ],
+  },
+  {
+    title: "Infrastructure",
+    items: [
+      {
+        name: "Linux",
+        note: "Servers, development environments, containers, and infrastructure work.",
+      },
+      { name: "Proxmox", note: "Virtualisation and homelab infrastructure." },
+      {
+        name: "UniFi",
+        note: "Networking, switching, wireless, and homelab infrastructure.",
+      },
+      {
+        name: "GitHub Actions",
+        note: "CI/CD automation, builds, tests, and deployments.",
+      },
+    ],
+  },
+  {
+    title: "Machine",
+    items: [
+      {
+        name: "MacBook Pro",
+        note: "Primary development machine and daily driver.",
+      },
+      {
+        name: "macOS",
+        note: "Main operating system for development and daily work.",
+      },
+      {
+        name: "Terminal · zsh",
+        note: "A large part of my development workflow happens from the terminal.",
+      },
+      {
+        name: "Keychron K13 Max",
+        note: "Low-profile mechanical keyboard used at my desk.",
+      },
     ],
   },
 ];

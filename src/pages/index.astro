@@ -10,22 +10,13 @@ import portrait from '../images/portrait.jpg';
 const all = await getCollection('projects', ({ data }) => !data.draft);
 const featured = all.sort((a, b) => a.data.order - b.data.order).slice(0, 3);
 
-/**
- * The reference portfolios this layout borrows from all put a stat band under
- * the hero — "120+ projects, 500 clients". None of that is true here, and an
- * inflated number on a student's site is the fastest way to lose a reviewer.
- * So the band stays, and every figure in it is checkable: the project count is
- * derived from the collection rather than typed in, so it cannot go stale.
- */
 const facts = [
-  { value: '2019', label: 'Working in IT since' },
-  { value: 'Year 3', label: 'HBO Informatica, Avans' },
-  { value: String(all.length), label: 'Projects in the open' },
-  { value: '.NET · TS', label: 'Primary stack' },
+  { value: 'MBO 4', label: 'IT foundation' },
+  { value: 'HBO', label: 'Informatica · Avans' },
+  { value: String(all.length), label: 'Public projects' },
+  { value: '.NET · C# · TS', label: 'Core stack' },
 ];
 
-// Mirrors the "trusted by" logo strip in the reference layouts — but with the
-// tools actually used, which /uses backs up in detail.
 const stack = [
   'C#',
   '.NET',
@@ -34,7 +25,6 @@ const stack = [
   'PostgreSQL',
   'Docker',
   'Linux',
-  'Git',
 ];
 ---
 
@@ -48,7 +38,7 @@ const stack = [
       <div class="intro">
         <p class="pill rise rise-1">
           <span class="dot" aria-hidden="true"></span>
-          Interning with the IT/AI team at Basic-Fit
+          HBO Informatica student · IT background
         </p>
 
         <p class="greeting rise rise-1">
@@ -56,16 +46,15 @@ const stack = [
         </p>
 
         <h1 class="rise rise-2">
-          Software developer with <span class="gradient-text"
-            >infrastructure roots.</span
-          >
+          Software developer with
+          <span class="gradient-text">infrastructure roots.</span>
         </h1>
 
         <p class="lede rise rise-3">
-          Early-career, systems-aware, and moving deliberately deeper into
-          software development. I build backends in .NET and interfaces in
-          TypeScript, with the reliability habits that came from running live
-          systems first.
+          I started in IT infrastructure and support and naturally moved toward
+          software development. I build with .NET, C#, TypeScript, and React,
+          while bringing the systems and reliability mindset that came from
+          working with real environments first.
         </p>
 
         <div class="actions rise rise-4">
@@ -73,7 +62,9 @@ const stack = [
             View the work
             <span class="arrow" aria-hidden="true">→</span>
           </a>
+
           <a class="btn" href="/contact">Get in touch</a>
+
           <SocialLinks class="hero-socials" />
         </div>
       </div>
@@ -92,11 +83,8 @@ const stack = [
           />
         </div>
 
-        {/* Decorative echo of the floating badges in the reference layouts.
-            Hidden below the two-column breakpoint, where they would land on
-            top of the portrait instead of beside it. */}
         <span class="chip chip-a" aria-hidden="true">C# · .NET</span>
-        <span class="chip chip-b" aria-hidden="true">TypeScript</span>
+        <span class="chip chip-b" aria-hidden="true">TypeScript · React</span>
         <span class="chip chip-c" aria-hidden="true">Docker · Linux</span>
       </div>
     </div>
@@ -123,19 +111,31 @@ const stack = [
 
   <section class="wrap section">
     <p class="section-label">About</p>
+
     <div class="about">
-      <h2>I started with infrastructure, not with code.</h2>
+      <h2>I started with IT, not with software.</h2>
+
       <div class="prose muted">
         <p>
-          Live systems, support environments, and technical operations where
-          reliability is not optional. That is where my technical foundation
-          came from, and it still shapes how I build software.
+          My background is in IT systems, infrastructure, and support. Before
+          software development became my main direction, I was already working
+          with the systems that software depends on: networks, servers,
+          endpoints, cloud services, monitoring, and production environments.
         </p>
+
         <p>
-          Dependencies, failure modes, and maintainability are part of how I
-          build, not an afterthought once something is shipped.
+          That experience shaped how I build. Dependencies, failure modes,
+          reliability, and maintainability are not things I want to think about
+          after something ships. They are part of the way I approach software
+          from the start.
         </p>
-        <p><a class="arrow-link" href="/about">Read the full story <span class="arrow">→</span></a></p>
+
+        <p>
+          <a class="arrow-link" href="/about">
+            Read the full story
+            <span class="arrow">→</span>
+          </a>
+        </p>
       </div>
     </div>
   </section>
@@ -146,15 +146,16 @@ const stack = [
         <p class="section-label">Selected work</p>
         <h2>Featured projects</h2>
       </div>
-      <a href="/projects" class="arrow-link"
-        >Explore all projects <span class="arrow">→</span></a
-      >
+
+      <a href="/projects" class="arrow-link">
+        Explore all projects
+        <span class="arrow">→</span>
+      </a>
     </div>
 
     <p class="lede intro">
-      The portfolio is still growing, but the direction is already clear:
-      infrastructure-aware engineering, backend security, and software that
-      solves real operational problems.
+      Projects built to explore software engineering, systems, automation, and
+      real operational problems.
     </p>
 
     <div class="grid">
@@ -165,13 +166,16 @@ const stack = [
   <section class="wrap">
     <div class="cta surface">
       <div class="cta-glow" aria-hidden="true"></div>
+
       <div class="cta-text">
         <h2>Let's talk about the work.</h2>
+
         <p class="muted">
-          Open to technical discussions, collaborations, and opportunities that
-          fit my current stage of development.
+          Open to technical discussions, collaborations, and opportunities where
+          I can keep learning, building, and contributing.
         </p>
       </div>
+
       <a class="btn btn--primary" href="/contact">
         Get in touch
         <span class="arrow" aria-hidden="true">→</span>
@@ -190,7 +194,6 @@ const stack = [
     overflow: hidden;
   }
 
-  /* Dot grid, faded out at the bottom so it ends rather than being cut off. */
   .backdrop {
     position: absolute;
     inset: 0;
@@ -245,15 +248,19 @@ const stack = [
     100% {
       transform: rotate(0deg);
     }
+
     65% {
       transform: rotate(14deg);
     }
+
     72% {
       transform: rotate(-8deg);
     }
+
     79% {
       transform: rotate(10deg);
     }
+
     86% {
       transform: rotate(-4deg);
     }
@@ -264,7 +271,7 @@ const stack = [
   }
 
   .hero .lede {
-    max-width: 46ch;
+    max-width: 48ch;
   }
 
   .actions {
@@ -276,7 +283,6 @@ const stack = [
   }
 
   .hero-socials {
-    /* Push the icon row away from the buttons without a hard divider. */
     margin-left: 0.5rem;
   }
 
@@ -302,8 +308,6 @@ const stack = [
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* The source is a 2:3 portrait; anchoring to the top keeps the face in
-       frame when the 4:5 crop takes height off the bottom. */
     object-position: 50% 12%;
   }
 
@@ -329,7 +333,7 @@ const stack = [
 
   .chip-b {
     top: 46%;
-    right: -1.75rem;
+    right: -2rem;
     animation-delay: -2s;
   }
 
@@ -479,8 +483,6 @@ const stack = [
 
   /* ── Responsive ────────────────────────────────────────────── */
 
-  /* One column below ~56rem. The portrait leads, because a face is a better
-     first impression on a phone than three lines of positioning copy. */
   @media (max-width: 56rem) {
     .hero-inner {
       grid-template-columns: minmax(0, 1fr);
@@ -513,7 +515,6 @@ const stack = [
 
     .hero-socials {
       margin-left: 0;
-      /* Own line under the two buttons rather than a cramped third item. */
       width: 100%;
       margin-top: 0.4rem;
     }
