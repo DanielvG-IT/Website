@@ -42,7 +42,10 @@ export default defineConfig({
 
     // Generates a perfect robots.txt file mapping back to your canonical sitemap
     robotsTxt({
-      sitemap: "https://danielvanginneken.com",
+      // `true` derives {site}/sitemap-index.xml from the configured origin.
+      // Never hardcode it: a literal string here drifts from `site` silently,
+      // and a bare origin is not a sitemap URL at all.
+      sitemap: true,
       host: "danielvanginneken.com",
       policy: [
         {
@@ -55,7 +58,7 @@ export default defineConfig({
   ],
 
   // 4. PERFORMANCE & LOCAL FONTS (CSP Compliant)
-  // Fonts are downloaded at build time and emitted into _astro/fonts/.
+  // Fonts are downloaded at build time and emitted into <build.assets>/fonts/.
   // This satisfies your public/.htaccess CSP rule: `font-src 'self' data:`.
   fonts: [
     {
